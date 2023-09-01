@@ -11,5 +11,5 @@ This repository contains code for the UNITE set of tools based on information th
 Currently, the best way to experiment with the code is to install it directly from Github using `pip`. The code was written in Python 3.10.12 but should work in earlier versions starting with 3.6. The only dependencies are `numpy` >= 1.25 and `scipy` >= 1.10.1 but also `git` is required for installation.
 
 ```
-pip install "git+https://github.com/manuel-alvarez-chaves/<package-name>"
+pip install "git+https://github.com/manuel-alvarez-chaves/unite_toolbox"
 ```
