@@ -1,5 +1,5 @@
 # UNITE Toolbox
-###  <u>Uni</u>fied diagnos<u>t</u>ic <u>e</u>valuation of physics-based, data-driven and hybrid hydrological models based on information theory
+###  Unified diagnostic evaluation of physics-based, data-driven and hybrid hydrological models based on information theory
 
 This repository contains code for the UNITE set of tools based on information theory for the diagnostic evaluation of hydrological models. In the UNITE tools we have functions to calculate different quantities used in information theory: entropy $H(X)$, Kullback-Leibler divergence $D_{KL}(p||q)$, mutual information $I(X; Y)$, using different methods. More specifically, the methods implemented are:
 
