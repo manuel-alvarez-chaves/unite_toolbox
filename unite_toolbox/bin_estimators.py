@@ -138,3 +138,44 @@ def calc_bin_mutual_information(data, edges):
             mi += fxy[idxy] * volume[idxy] * np.log(fxy[idxy] / (fx[idxy[:d-1]] * fy[idxy[-1]]))
             
     return max(0, mi)
+    
+def calc_qs_entropy(sample, alpha=0.25, N_k=500):
+    """Calculates the 1-D entropy of the input data.
+
+    Calculates the 1-D entropy of the input data [in nats] using
+    the  quantile spacing (QS) estimator proposed by: Gupta et al.
+    (2021) https://doi.org/10.3390/e23060740
+    
+    Adapted from: https://github.com/rehsani/Entropy
+
+
+    Parameters
+    ----------
+    data : numpy.ndarray
+        Flat array
+    alpha : float, optional
+        percent of the instances from the sample used for estimation of 
+        entropy (i.e., number of quantile-spacings).
+    N_k : int, optional
+        number of sample subsets, used to estimate the sample distribution 
+        for each quantile empirically
+    
+    Returns
+    -------
+    h : float
+        Entropy [in nats] of 'alpha' percent of the instances"""
+
+    sample = sample.flatten()
+    n = int(np.ceil(alpha * sample.size))
+    x_min = sample.min()
+    x_max = sample.max()
+    sample.sort()
+
+    sample_b = np.random.choice(sample, sample.size, replace=True)
+    X_alpha = [np.random.choice(sample_b[1:-1], n-1, replace=False) for _ in range(N_k)]
+    X_alpha = np.vstack(X_alpha)
+    X_alpha.sort(axis=1)
+    Z = np.hstack([x_min, X_alpha.mean(axis=0), x_max])
+    dZ = np.diff(Z)
+    h = 1 / (n + 1) * np.log((n + 1) * dZ).sum()
+    return h
