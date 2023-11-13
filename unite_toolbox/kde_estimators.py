@@ -96,7 +96,7 @@ def calc_ikde_kld(data_f, data_g, bandwidth=None):
     def eval_kld(*args):
         f = f_kde.evaluate(np.vstack(args))
         g = g_kde.evaluate(np.vstack(args))
-        if f == 0.0:
+        if f == 0.0 or g == 0.0:
             return 0.0
         else: return f * np.log(f / g) 
 
@@ -118,4 +118,27 @@ def calc_kde_mutual_information(x, y, bandwidth=None):
     pxy_kde = kde_xy.evaluate(xy.T)
     
     mi = np.mean(np.log(pxy_kde / (px_kde * py_kde)))
+    return max(0, mi)
+    
+def calc_ikde_mutual_information(x, y, bandwidth=None):
+    """
+    """
+    
+    xy = np.hstack((x, y))
+    d = xy.shape[1]
+
+    kde_x = gaussian_kde(x.T, bw_method=bandwidth)
+    kde_y = gaussian_kde(y.T, bw_method=bandwidth)
+    kde_xy = gaussian_kde(xy.T, bw_method=bandwidth)
+    bw = kde_xy.factor
+    
+    lims = np.vstack((xy.min(axis=0) - bw, xy.max(axis=0) + bw)).T
+
+    def eval_mi(*args):
+        px = kde_x.evaluate(np.vstack(args[:d-1]))
+        py = kde_y.evaluate(np.vstack((args[d-1],)))
+        pxy = kde_xy.evaluate(np.vstack(args))
+        return pxy * np.log(pxy/(px * py))
+    
+    mi = nquad(eval_mi, ranges=lims)[0]
     return max(0, mi)
