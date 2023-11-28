@@ -32,7 +32,7 @@ A typical example would involve the calculation of the entropy :math:`H(X)` of a
     print(f"Est. H = {est_h:.3f} nats")
     print(f"True H = {dist.entropy():.3f} nats")
 
-Output:
+
 
 .. code-block:: console
 
