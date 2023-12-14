@@ -43,15 +43,25 @@ def calc_knn_density(x, data, k=5, p_norm=2):
 
 
 def calc_knn_entropy(data, k=3, p_norm=2):
-    """Calculates the (joint) entropy of the input n-d array.
+    r"""Calculates the (joint) entropy of the input n-d array.
 
     Calculates the (joint) entropy of the input data [in nats] using
     the  Kozachenko and Leonenko (KL) (1987) estimator which is an approach
     based on k-nearest neighbors (k-NN) to approximate probability
     densities. By default, the Euclidean norm distance (p-norm = 2) is used
     to calculate distances. http://mi.mathnet.ru/ppi797
+    
+    .. math::
+        \hat{H}(X) = \psi(N) - \psi(k) + log(c_1) + \frac{d}{N}\sum_{i=1}^{N}\log(\rho^{d}_k(i))
 
-
+    Where:
+        * :math:`\psi` is the digamma function.
+        * :math:`N` is the number of samples in the data.
+        * :math:`k` is the number of neighbors used.
+        * :math:`c_1` is the volume of a unit :math:`L^p` ball.
+        * :math:`d` is the number of dimensions of the data.
+        * :math:`\rho^{d}_k(i)` is the distance between a point :math:`i` and its *k*th nearest neighbor.
+    
     Parameters
     ----------
     data : numpy.ndarray
