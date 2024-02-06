@@ -76,8 +76,8 @@ def calc_kde_kld(data_f, data_g, bandwidth=None):
     f_kde = gaussian_kde(data_f.T, bw_method=bandwidth)
     g_kde = gaussian_kde(data_g.T, bw_method=bandwidth)
     
-    pf_kde = f_kde.evaluate(data_g.T)
-    pg_kde = g_kde.evaluate(data_g.T)
+    pf_kde = f_kde.evaluate(data_f.T)
+    pg_kde = g_kde.evaluate(data_f.T)
     
     kld = np.abs(np.mean(np.log(pf_kde / pg_kde)))
     
