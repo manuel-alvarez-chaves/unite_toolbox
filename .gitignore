@@ -2,3 +2,6 @@ docs/build
 __pycache__/
 build/
 *.egg-info
+dev/
+.ipynb_checkpoints
+.venv
