@@ -20,7 +20,7 @@ def add_noise_to_data(data):
     # Generate only required noise for the data
     mask = find_repeats(data)
     noise = stats.multivariate_normal.rvs(
-        cov=np.diag(noise_scale), size=mask.sum()
+        cov=np.diag(noise_scale.flatten()), size=mask.sum()
     ).reshape(-1, d)
     noisy_data = data.copy()
     noisy_data[mask] += noise
@@ -29,7 +29,7 @@ def add_noise_to_data(data):
 
 
 def one_sample_bootstrap(
-    data, estimator, n_bootstraps, confidence, add_noise=False, **kwargs
+    data, estimator, n_bootstraps, significance, add_noise=False, **kwargs
 ):
     n, _ = data.shape
     res = np.empty(n_bootstraps)
@@ -39,5 +39,7 @@ def one_sample_bootstrap(
         subsample = add_noise_to_data(subsample) if add_noise else subsample
         res[i] = estimator(subsample, **kwargs)
     bs_mean = res.mean()
-    bs_ci = np.percentile(res, [confidence * 100, 100 - confidence * 100])
+    bs_ci = np.percentile(
+        res, [(significance * 100 ) / 2, 100 - (significance * 100 ) / 2]
+    )
     return bs_mean, bs_ci
