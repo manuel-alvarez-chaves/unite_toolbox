@@ -14,7 +14,7 @@ def add_noise_to_data(data):
     _, d = data.shape
     # Scale of noise: two orders of magnitude below the order of magnitude
     # of the std. dev. of the data
-    data_std = np.std(data, axis=0).reshape(1, -1) / 100
+    data_std = np.std(data, axis=0).reshape(1, -1) / 10
     noise_scale = 10 ** (np.floor(np.log10(np.abs(data_std))))
 
     # Generate only required noise for the data
@@ -28,6 +28,21 @@ def add_noise_to_data(data):
     return noisy_data
 
 
+def density_bootstrap(
+    x, data, estimator, n_bootstraps, significance, add_noise=False, **kwargs
+):
+    n, d = data.shape
+    res = np.empty(shape=(x.shape[0], x.shape[1], n_bootstraps))
+    for i in range(n_bootstraps):
+        sub_idx = np.random.choice(n, size=n, replace=True)
+        subsample = data[sub_idx, :].copy()
+        subsample = add_noise_to_data(subsample) if add_noise else subsample
+        res[:, :, i] = estimator(x, subsample, **kwargs).reshape(-1, d)
+    bs_mean = res.mean(axis=2)
+    bs_ci = np.quantile(res, [significance / 2, 1 - (significance / 2)], axis=2)
+    return bs_mean, bs_ci
+
+
 def one_sample_bootstrap(
     data, estimator, n_bootstraps, significance, add_noise=False, **kwargs
 ):
@@ -39,7 +54,5 @@ def one_sample_bootstrap(
         subsample = add_noise_to_data(subsample) if add_noise else subsample
         res[i] = estimator(subsample, **kwargs)
     bs_mean = res.mean()
-    bs_ci = np.percentile(
-        res, [(significance * 100 ) / 2, 100 - (significance * 100 ) / 2]
-    )
+    bs_ci = np.quantile(res, [significance / 2, 1 - (significance / 2)])
     return bs_mean, bs_ci
