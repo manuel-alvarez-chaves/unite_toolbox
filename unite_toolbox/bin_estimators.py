@@ -3,15 +3,14 @@ import numpy as np
 def calc_bin_density(x, data):
     """Currently only for 1D"""
     
-    edges = np.histogram_bin_edges(data, bins="scott")
-    fi, _ = np.histogram(data, edges, density=True)
+    fi, edges = np.histogram(data, "scott", density=True)
 
-    p_bin = np.zeros(shape=x.shape)
+    fx = np.zeros(shape=x.shape)
     x_bins = np.digitize(x, edges)
-    id = np.bitwise_and(x_bins != 0, x_bins != len(edges))
-    p_bin[id] = fi[x_bins[id] - 1]
+    idx = np.bitwise_and(x_bins != 0, x_bins != len(edges))
+    fx[idx] = fi[x_bins[idx] - 1]
     
-    return p_bin
+    return fx
 
 def estimate_ideal_bins(data, counts=True):
     """
