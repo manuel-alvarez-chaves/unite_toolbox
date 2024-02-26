@@ -5,12 +5,9 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 packages = ["unite_toolbox",]
 
-[tool.setuptools.dynamic]
-version = {attr = "package.__version__"}
-
 [project]
 name = "unite_toolbox"
-dynamic = ["version"]
+version = ["0.1.5"]
 dependencies = [
   "numpy >= 1.25.0",
   "scipy >= 1.12.0",
