@@ -8,10 +8,10 @@ This repository contains code for the UNITE set of tools based on information th
  - *k*-nearest neighbor based estimation (*k*NN)
 
 ## Installation
-Currently, the best way to experiment with the code is to install it directly from Github using `pip`. The code was written in Python 3.10.12 but should work in earlier versions starting with 3.6. The only dependencies are `numpy` >= 1.25 and `scipy` >= 1.10.1 but also `git` is required for installation.
+Although the code is still highly experimental and in very active development, a release version is hosted in PyPI and can be installed using `pip`. Check the `pyproject.toml` for requirements. The current state of the toolbox can be installed directly from this repository using `git`.
 
 ```
-pip install "git+https://github.com/manuel-alvarez-chaves/unite_toolbox"
+pip install unite_toolbox
 ```
 
 ## How-to

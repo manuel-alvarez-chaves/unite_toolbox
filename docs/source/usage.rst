@@ -6,11 +6,12 @@ Usage
 Installation
 ------------
 
-As the toolbox is still in very active development, installation can only be done through `git` and `pip`:
+Although the code is still highly experimental and in very active development, a release version is hosted in PyPI and can be installed using `pip`.
+The current state of the toolbox can be installed directly from the `repository <https://github.com/manuel-alvarez-chaves/unite_toolbox>`_ using `git`.
 
 .. code-block:: console
 
-   $ pip install "git+https://github.com/manuel-alvarez-chaves/unite_toolbox"
+   $ pip install unite_toolbox
 
 
 Estimation

@@ -1,2 +1,4 @@
+import importlib.metadata
+
 # Version
-__version__ = "0.1.4"
+__version__ = importlib.metadata.version("unite_toolbox")
