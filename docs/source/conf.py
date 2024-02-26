@@ -13,10 +13,10 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'UNITE Toolbox'
-copyright = '2023, Manuel Álvarez Chaves'
+copyright = '2024, Manuel Álvarez Chaves'
 author = 'Manuel Álvarez Chaves'
 release = '0.1'
-version = '0.1.0'
+version = '0.1.4'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -28,6 +28,8 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
 ]
+
+autodoc_member_order = 'bysource'
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
