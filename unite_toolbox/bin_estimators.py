@@ -20,14 +20,14 @@ def estimate_ideal_bins(data, counts=True):
         number of bins or bin edges for each feature of the data (if counts=False).
     """
 
-    _, n_features = data.shape
+    _, d_features = data.shape
 
     methods = ["scott", "fd", "sturges"]
     ideal_bins = []
 
     for m in methods:
         d_bins = []
-        for d in range(n_features):
+        for d in range(d_features):
             num_bins = np.histogram_bin_edges(data[:, d], bins=m)
             num_bins = len(num_bins) if counts is True else num_bins
             d_bins.append(num_bins)
@@ -84,7 +84,8 @@ def calc_bin_density(x, data, edges):
 
 
 def calc_vol_array(edges):
-    """ """
+    """
+    """
 
     res = edges[0]
     for e in edges[1:]:
@@ -136,7 +137,8 @@ def calc_bin_entropy(data, edges):
 
 
 def calc_bin_kld(data_f, data_g, edges):
-    """ """
+    """
+    """
 
     fi, _ = np.histogramdd(data_f, bins=edges, density=True)
     gi, edges = np.histogramdd(data_g, bins=edges, density=True)
