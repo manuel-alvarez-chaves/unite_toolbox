@@ -98,7 +98,8 @@ def calc_ikde_kld(data_f, data_g, bandwidth=None):
         g = g_kde.evaluate(np.vstack(args))
         if f == 0.0 or g == 0.0:
             return 0.0
-        else: return f * np.log(f / g) 
+        else:
+            return f * np.log(f / g) 
 
     kld = nquad(eval_kld, ranges=lims)[0]
     return kld

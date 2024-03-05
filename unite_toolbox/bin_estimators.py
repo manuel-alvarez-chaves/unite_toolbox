@@ -3,13 +3,14 @@ import numpy as np
 
 def estimate_ideal_bins(data, counts=True):
     """
-    Estimates the ideal number of bins for each column of a 2D data array using
-    three different methods: Scott, Freedman-Diaconis, and Sturges.
+    Estimates the ideal number of bins for each feature (column) of a 2D data
+    array using different methods. See numpy.histogram_bin_edges for a list
+    of available methods.
 
     Parameters
     ----------
     data : numpy.ndarray
-        Array of shape (n_samples, n_features)
+        Array of shape (n_samples, d_features)
     counts : bool, optional
         Whether to return the number of bins (True) or the bin edges (False).
 
@@ -22,7 +23,7 @@ def estimate_ideal_bins(data, counts=True):
 
     _, d_features = data.shape
 
-    methods = ["scott", "fd", "sturges"]
+    methods = ["fd", "scott", "sturges", "doane"]
     ideal_bins = []
 
     for m in methods:
@@ -40,13 +41,13 @@ def calc_bin_density(x, data, edges):
     """
     Calculates the density of every point of the 2D array x within the d-dimensional
     histogram created from data and edges.
-    
+
     Similar to a lookup operation where the
     entries in x are replaced by the bin indices in which they would fall given the
     binning scheme defined in edges. Then the indices are used to "look up" each value
     of x in the d-dimensional histogram created from data and edges.
 
-    arameters
+    Parameters
     ----------
     x : numpy.ndarray
         Array of shape (n_samples, d_features)
@@ -73,19 +74,16 @@ def calc_bin_density(x, data, edges):
         res.append(dimbins)
 
     # Loop over elements
-    indexes = np.vstack(res).T
+    indexes = np.column_stack(res)
     fx = np.zeros(shape=(x.shape[0], 1))
     for i, idx in enumerate(indexes):
-        if -9999 in idx:
-            pass
-        else:
+        if -9999 not in idx:
             fx[i, 0] += fi[tuple(idx)]
     return fx
 
 
 def calc_vol_array(edges):
-    """
-    """
+    """ """
 
     res = edges[0]
     for e in edges[1:]:
@@ -137,8 +135,7 @@ def calc_bin_entropy(data, edges):
 
 
 def calc_bin_kld(data_f, data_g, edges):
-    """
-    """
+    """ """
 
     fi, _ = np.histogramdd(data_f, bins=edges, density=True)
     gi, edges = np.histogramdd(data_g, bins=edges, density=True)
