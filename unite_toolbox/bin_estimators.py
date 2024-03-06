@@ -83,12 +83,34 @@ def calc_bin_density(x, data, edges):
 
 
 def calc_vol_array(edges):
-    """ """
+    """Calculates the volume of the multidimensional array defined by edges
 
-    res = edges[0]
+    Calculates the volume of each cell of the multidimensional array defined
+    by edges where edges is a list of arrays. As an example, if edges contains
+    two arrays, this functions returns a 2D grid where each element in the grid
+    contains the value for the area of that specific cell. If edges contains three
+    arrays, the returned grid is 3D where each element of the grid is the volume of
+    the cell, and so on.
+
+    As this is done to calculate the volume of each bin of a multidimensional histogram,
+    the returned grid can be indexed by the same indices as a histogramdd from NumPy.
+
+    Parameters
+    ----------
+    edges : list of 1D numpy.ndarray
+        Array of shape (n_samples, d_features)
+
+    Returns
+    -------
+    fx : numpy.ndarray
+        Array of shape (n_samples, 1)
+
+    """
+
+    res = np.diff(edges[0])
     for e in edges[1:]:
-        res = np.stack([res] * len(e), axis=-1)
-        for idx, val in enumerate(e):
+        res = np.stack([res] * (len(e) - 1), axis=-1)
+        for idx, val in enumerate(np.diff(e)):
             res[..., idx] = res[..., idx] * val
     return res
 
@@ -121,7 +143,6 @@ def calc_bin_entropy(data, edges):
     fi, edges = np.histogramdd(data, bins=edges, density=True)
 
     # volume
-    edges = [np.diff(e) for e in edges]
     volume = calc_vol_array(edges)
 
     # entropy
@@ -140,7 +161,6 @@ def calc_bin_kld(data_f, data_g, edges):
     fi, _ = np.histogramdd(data_f, bins=edges, density=True)
     gi, edges = np.histogramdd(data_g, bins=edges, density=True)
 
-    edges = [np.diff(e) for e in edges]
     volume = calc_vol_array(edges)
 
     ids = fi.nonzero()
@@ -153,7 +173,33 @@ def calc_bin_kld(data_f, data_g, edges):
     return kld
 
 
-def calc_bin_mutual_information2(x, y, edges):
+def calc_bin_mutual_information(x, y, edges):
+    """Calculates mutual information between X and Y using binning
+
+    Calculates the mutual information between an array X and an array Y. Both X and
+    don't necesarily need the same number of samples as binning is used. This approach
+    builds multivariate histograms for X, Y and X-Y using the specified edges, and
+    evaluates MI in every bin where the density of X-Y is not zero.
+    This is a
+    resubstitution estimate.
+
+    Parameters
+    ----------
+    x : numpy.ndarray
+        Array of shape (n_samples, d1_features)
+    y : numpy.ndarray
+        Array of shape (m_samples, d2_features)
+    edges : list
+        A list of two lists each containing either integers for
+        the number of bins in each axis or arrays of the edges for
+        the binning scheme of each axis.
+
+    Returns
+    -------
+    mi : float
+        Mutual information between x and y [in nats]
+
+    """
     _, d1 = x.shape
     _, d2 = y.shape
     data = np.hstack((x, y))
@@ -161,8 +207,7 @@ def calc_bin_mutual_information2(x, y, edges):
     fx, _ = np.histogramdd(x, bins=edges[0], density=True)
     fy, _ = np.histogramdd(y, bins=edges[1], density=True)
 
-    joint_sizes = [np.diff(edge) for edge in joint_edges]
-    volume = calc_vol_array(joint_sizes)
+    volume = calc_vol_array(joint_edges)
 
     mi = 0.0
     for idx in np.ndindex(fxy.shape):
