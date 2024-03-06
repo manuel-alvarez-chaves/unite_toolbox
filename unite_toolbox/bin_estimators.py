@@ -88,8 +88,8 @@ def calc_vol_array(edges):
     res = edges[0]
     for e in edges[1:]:
         res = np.stack([res] * len(e), axis=-1)
-        for id, val in enumerate(e):
-            res[..., id] = res[..., id] * val
+        for idx, val in enumerate(e):
+            res[..., idx] = res[..., idx] * val
     return res
 
 
@@ -153,31 +153,26 @@ def calc_bin_kld(data_f, data_g, edges):
     return kld
 
 
-def calc_bin_mutual_information(data, edges):
-    _, d = data.shape
+def calc_bin_mutual_information2(x, y, edges):
+    _, d1 = x.shape
+    _, d2 = y.shape
+    data = np.hstack((x, y))
+    fxy, joint_edges = np.histogramdd(data, bins=edges[0] + edges[1], density=True)
+    fx, _ = np.histogramdd(x, bins=edges[0], density=True)
+    fy, _ = np.histogramdd(y, bins=edges[1], density=True)
 
-    data_x = data[:, : d - 1].reshape(-1, d - 1)
-    edges_x = edges[: d - 1]
-    data_y = data[:, d - 1].reshape(-1, 1)
-    edges_y = edges[-1]
-
-    fxy, bin_edges = np.histogramdd(data, bins=edges, density=True)
-    fx, _ = np.histogramdd(data_x, bins=edges_x, density=True)
-    fy, _ = np.histogram(data_y, bins=edges_y, density=True)
-
-    bin_edges = [np.diff(e) for e in bin_edges]
-    volume = calc_vol_array(bin_edges)
+    joint_sizes = [np.diff(edge) for edge in joint_edges]
+    volume = calc_vol_array(joint_sizes)
 
     mi = 0.0
-    for idxy in np.ndindex(fxy.shape):
-        if fxy[idxy] != 0.0:
+    for idx in np.ndindex(fxy.shape):
+        if fxy[idx] != 0.0:
             mi += (
-                fxy[idxy]
-                * volume[idxy]
-                * np.log(fxy[idxy] / (fx[idxy[: d - 1]] * fy[idxy[-1]]))
+                fxy[idx]
+                * volume[idx]
+                * np.log(fxy[idx] / (fx[idx[:d1]] * fy[idx[-d2:]]))
             )
-
-    return max(0, mi)
+    return max(0.0, mi)
 
 
 def calc_qs_entropy(sample, alpha=0.25, N_k=500):
