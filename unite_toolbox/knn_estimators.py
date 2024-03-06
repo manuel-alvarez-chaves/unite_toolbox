@@ -29,7 +29,8 @@ def vol_lp_ball(r, d, p_norm):
     Returns
     -------
     vol : float
-        Volume of the L^p ball"""
+        Volume of the L^p ball
+    """
 
     if p_norm == np.inf:  # faster
         vol = (2**d) * (r**d)
@@ -116,7 +117,8 @@ def calc_knn_entropy(data, k=1, p_norm=2):
     Returns
     -------
     h : float
-        Entropy of the data set [in nats]"""
+        Entropy of the data set [in nats]
+    """
 
     if len(data.shape) == 1:
         data = data.reshape(-1, 1)
@@ -170,7 +172,8 @@ def calc_knn_kld(p, q, k=1, p_norm=2):
     Returns
     -------
     kld : float
-        Kullback-Leibler divergence between p and q [in nats]"""
+        Kullback-Leibler divergence between p and q [in nats]
+    """
 
     n, m = len(p), len(q)
     d = len(p[0])
@@ -186,12 +189,13 @@ def calc_knn_kld(p, q, k=1, p_norm=2):
 
 
 def calc_knn_mutual_information(x, y, k=15):
-    r"""Calculates the mutual information between two n-d arrays of data.
+    r"""Calculates mutual information between X and Y using $k$-NN.
 
-    Estimates the mutual information between two data sets (x and y) [in nats] using
-    the method of estimation proposed Kraskov et al. (2004). Both x and y
-    can have d >= 1 which means they can have multiple features. By default, the maximum
-    norm (p-norm = ∞) and three neighbors (k = 3) are used. 10.1103/PhysRevE.69.066138
+    Estimates the mutual information between X and Y [in nats] using
+    the method of estimation proposed Kraskov et al. (2004). Both X and Y
+    can have d >= 1 which means they can have multiple features. By default,
+    the maximum norm (p-norm = ∞) and fifteen neighbors (k = 15) are used.
+    10.1103/PhysRevE.69.066138
 
     .. math::
         \hat{I}(X;Y) = \psi(k) - \frac{1}{N} \sum_{i=1}^{N} \mathbb{E} \left[\psi(n_{i,x} + 1) + \psi(n_{i,y} + 1) \right] + \psi(N)
@@ -214,7 +218,8 @@ def calc_knn_mutual_information(x, y, k=15):
     Returns
     -------
     mi : float
-        Mutual information between x and y [in nats]"""
+        Mutual information between x and y [in nats]
+    """
 
     assert len(x) == len(y), "x and y must have the same number of samples."
 
