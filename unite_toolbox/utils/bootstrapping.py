@@ -6,7 +6,8 @@ from tqdm import trange
 
 
 def find_repeats(data: ArrayLike) -> NDArray:
-    """Returns a boolean mask for repeat rows in data.
+    """Returns a boolean mask for repeat rows in data
+    where True is a repeated row.
 
     Parameters
     ----------
