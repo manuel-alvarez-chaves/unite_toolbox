@@ -8,6 +8,11 @@ def valida_data_kld(a, b, verbose=False):
     distance based calculation of KLD, or other method which requires only
     unique values in two arrays.
 
+    The code finds repeats in `a`, deletes them, and adds back the unique
+    values that were repreated so that not a lot of the data is lost. A
+    similar procedure is applied to `b` by first concatenating it with `a`
+    so that no value in `a` is repeated in `b`.
+
     Parameters
     ----------
     a : numpy.ndarray
