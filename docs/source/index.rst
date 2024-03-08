@@ -26,6 +26,7 @@ Check out the :doc:`usage` section for further information, including how to
    usage
    estimators
    utilities
+   tutorials
 
 
 Indices and tables

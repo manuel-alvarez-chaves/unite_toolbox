@@ -15,7 +15,7 @@
 project = 'UNITE Toolbox'
 copyright = '2024, Manuel Álvarez Chaves'
 author = 'Manuel Álvarez Chaves'
-release = '0.1'
+release = '0.1.5'
 version = '0.1.4'
 
 # -- General configuration ---------------------------------------------------
@@ -27,6 +27,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
+    'nbsphinx',
 ]
 
 autodoc_member_order = 'bysource'
