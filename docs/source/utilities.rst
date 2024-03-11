@@ -6,6 +6,7 @@ Utilities
    :caption: Modules:
    
    bootstrapping
+   data_validation
    marginal_information
    sampling
    
