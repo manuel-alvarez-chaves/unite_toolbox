@@ -5,6 +5,6 @@ Estimators
    :maxdepth: 2
    :caption: Modules:
    
-   bin
-   kde
-   knn
+   estimators/bin
+   estimators/kde
+   estimators/knn

@@ -18,7 +18,7 @@ must be accounted for and, then, the density estimate can be calculated as
 The ideal :math:`\Delta` varies depending on the ``data``, but several
 "rules-of-thumb" exist that can be used as guidance. These have been
 implemented in the **UNITE** toolbox taking advantage and following the same
-notation as in ``NumPy``'s ``histogram_bin_edges``.
+notation as in ``numpy``'s ``histogram_bin_edges``. See: ``estimate_ideal_bins``.
 
 Having an estimate of density :math:`\hat{p}(x)` at :math:`x` makes it so entropy, KL divergence
 and mututal information can be calculated directly as **resubstitution estimates** using the
