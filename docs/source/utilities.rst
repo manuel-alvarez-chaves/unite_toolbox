@@ -5,8 +5,8 @@ Utilities
    :maxdepth: 2
    :caption: Modules:
    
-   bootstrapping
-   data_validation
-   marginal_information
-   sampling
+   utilities/bootstrapping
+   utilities/data_validation
+   utilities/marginal_information
+   utilities/sampling
    
