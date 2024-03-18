@@ -16,5 +16,5 @@ pip install unite_toolbox
 
 ## How-to
 
-In the folder `examples\` please find a tutorial on the general usage of the toolbox.
+In the [documentation](https://unite-toolbox.readthedocs.io/) please find [tutorials](https://unite-toolbox.readthedocs.io/en/latest/tutorials.html) on the general usage of the toolbox and some aplications.
 
