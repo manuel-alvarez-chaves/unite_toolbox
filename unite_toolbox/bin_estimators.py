@@ -137,7 +137,7 @@ def calc_bin_entropy(data, edges):
     data : numpy.ndarray
         Array of shape (n_samples, d_features)
     edges : list or int
-        A list of length n_features which contains arrays describing the bin edges
+        A list of length d_features which contains arrays describing the bin edges
         along each dimension or a list of ints describing the number of bins to use
         in each dimension. Input can also be a single int and the histogram will be
         created with the same number of bins for each dimension.
@@ -165,6 +165,54 @@ def calc_bin_entropy(data, edges):
     cf = np.sum(f * delta * np.log(delta))
 
     return h, cf
+
+
+def calc_uniform_bin_entropy(data, edges):
+    """Alternative method to calculate entropy using binning
+
+    Calculates the (joint) entropy of the input data. Using this method, every data
+    point is substituted by the specific bin it occupies in `edges`. Therefore limiting
+    the required memory to only store the number of entries in data.
+
+    NOTE: this only works for uniform binning schemes as the correction factor for
+    differential entropy is calculated as assuming that every bin is of the same size.
+
+    Parameters
+    ----------
+    data : numpy.ndarray
+        Array of shape (n_samples, d_features)
+    edges : list or int
+        A list of length d_features which contains arrays describing the bin edges
+        along each dimension or a list of ints describing the number of bins to use
+        in each dimension.
+
+    Returns
+    -------
+    h : float
+        The (joint) entropy of the input data after binning.
+    corr_fact : float
+        The correction factor due to bin spacing. See Cover &
+        Thomas (2006) Eq. 8.28 ISBN: 978-0-471-24195-9
+    """
+    # Digitize data and get count of unique rows
+    data_binned = np.empty(shape=data.shape, dtype=np.int64)
+    for idy in range(data.shape[1]):
+        data_binned[:, idy] = np.digitize(data[:, idy], edges[idy])
+    _, counts = np.unique(data_binned, return_counts=True, axis=0)
+
+    # Calculate the uniform delta
+    delta = 1.0
+    for e in edges:
+        delta *= np.diff(e)[0]  # first item in every edge
+
+    # Calculate density from counts
+    density = counts / (data.shape[0] * delta)
+
+    # Calculate entropy and correction factor
+    h = -1 * np.sum(delta * density * np.log(density))
+    corr_fact = -1 * np.sum(density * delta * np.log(delta))
+
+    return h, corr_fact
 
 
 def calc_bin_kld(p, q, edges):
