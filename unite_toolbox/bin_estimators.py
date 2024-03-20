@@ -228,8 +228,10 @@ def calc_bin_kld(p, q, edges):
         Array of shape (n_samples, d_features)
     q : numpy.ndarray
         Array of shape (m_samples, d_features)
-    edges : list of 1d numpy.arrays
-        bandwith of the gaussian kernel
+    edges : list or int
+        A list of length d_features which contains arrays describing the bin edges
+        along each dimension or a list of ints describing the number of bins to use
+        in each dimension.
 
     Returns
     -------
@@ -237,18 +239,31 @@ def calc_bin_kld(p, q, edges):
         Kullback-Leibler divergence between p and q [in nats]
     """
 
-    f, _ = np.histogramdd(p, bins=edges, density=True)
-    g, edges = np.histogramdd(q, bins=edges, density=True)
+    # Bin according to support of q!
+    p_binned = np.empty(shape=p.shape, dtype=np.int64)
+    q_binned = np.empty(shape=q.shape, dtype=np.int64)
+    for idy in range(q.shape[1]):
+        p_binned[:, idy] = np.digitize(p[:, idy], edges[idy])
+        q_binned[:, idy] = np.digitize(q[:, idy], edges[idy])
 
-    volume = calc_vol_array(edges)
+    # Find uniques
+    bins_p, counts_p = np.unique(p_binned, return_counts=True, axis=0)
+    bins_q, counts_q = np.unique(q_binned, return_counts=True, axis=0)
 
-    idx = f.nonzero()
-    f, g, delta = f[idx], g[idx], volume[idx]
-    idy = g.nonzero()
-    f, g, delta = f[idy], g[idy], delta[idy]
+    set_p = set(tuple(x) for x in bins_p)
+    set_q = set(tuple(x) for x in bins_q)
+    matching_bins = np.array([x for x in set_p & set_q])
 
-    kld = np.sum(f * delta * np.log(f / g))
+    # Calculate density (here equal to frequency)
+    density_p = counts_p / p.shape[0]
+    density_q = counts_q / q.shape[0]
 
+    # Evaluate KLD only in matching bins
+    kld = 0.0
+    for idx in matching_bins:
+        a = np.where((bins_p == idx).all(axis=1))[0][0]
+        b = np.where((bins_q == idx).all(axis=1))[0][0]
+        kld += density_p[a] * np.log(density_p[a] / density_q[b])
     return kld
 
 
