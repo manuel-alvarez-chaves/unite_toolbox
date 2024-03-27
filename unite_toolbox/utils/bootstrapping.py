@@ -19,7 +19,7 @@ def find_repeats(data: ArrayLike) -> NDArray:
     mask : numpy.ndarray
         Boolean array of shape (n_samples,)"""
 
-    data = np.asarray(data)
+    data = np.asarray(data, dtype=np.float64)
     _, inv, counts = np.unique(data, return_inverse=True, return_counts=True, axis=0)
     mask = np.where(counts[inv] > 1, True, False)
     return mask
@@ -43,7 +43,7 @@ def add_noise_to_data(data: ArrayLike) -> NDArray:
     noisy_data : numpy.ndarray
         2D array of shape (n_samples, d_features)"""
 
-    data = np.asarray(data)
+    data = np.asarray(data, dtype=np.float64)
     _, d = data.shape
 
     # Determine the scale of the noise
@@ -52,9 +52,7 @@ def add_noise_to_data(data: ArrayLike) -> NDArray:
 
     # Generate only the required noise for the data
     mask = find_repeats(data)
-    noise = stats.multivariate_normal.rvs(
-        cov=np.diag(noise_scale.flatten()), size=mask.sum()
-    ).reshape(-1, d)
+    noise = stats.multivariate_normal.rvs(cov=np.diag(noise_scale.flatten()), size=mask.sum(), random_state=42).reshape(-1, d)
 
     # Add noise to specific rows
     noisy_data = data.copy()
