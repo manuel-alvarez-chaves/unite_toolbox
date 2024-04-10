@@ -5,7 +5,7 @@ from scipy.integrate import nquad
 
 def calc_kde_density(x, data, bandwidth=None):
     """Calculates density using KDE
-    
+
     Calculates the density of every point of the 2D array `x` within KDE
     representation of `data`. Simply, every point in `x` is evaluated
     in a KDE-based distribution of `data`.
@@ -57,10 +57,10 @@ def calc_kde_entropy(data, bandwidth=None):
 
 def calc_ikde_entropy(data, bandwidth=None):
     """Calculates entropy using numerical integration and KDE
-    
+
     Calculates the (joint) entropy of the input data [in nats] by
     approximating the (joint) density of the distribution using a
-    Gaussian kernel density estimator (KDE). 
+    Gaussian kernel density estimator (KDE).
     The method creates a helper function that as the basis
     for numerical integration. The integration limits are set as the maximum
     and minimum values of X and Y, plus and minus one magnitude of the bandwidth
@@ -116,7 +116,7 @@ def calc_kde_kld(p, q, bandwidth=None):
 def calc_ikde_kld(p, q, bandwidth=None):
     """Calculates Kullback-Leibler divergence (relative entropy) using
     numerical integration and KDE
-    
+
     """
 
     p_kde = gaussian_kde(p.T, bw_method=bandwidth)
