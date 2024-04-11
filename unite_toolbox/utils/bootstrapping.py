@@ -1,11 +1,10 @@
 import numpy as np
-from numpy.typing import ArrayLike, NDArray
 
 from scipy import stats
 from tqdm import trange
 
 
-def find_repeats(data: ArrayLike) -> NDArray:
+def find_repeats(data):
     """Returns a boolean mask for repeat rows in data
     where True is a repeated row.
 
@@ -25,7 +24,7 @@ def find_repeats(data: ArrayLike) -> NDArray:
     return mask
 
 
-def add_noise_to_data(data: ArrayLike) -> NDArray:
+def add_noise_to_data(data):
     """Adds noise to repeated rows in data.
 
     Adds Gaussian noise to only the repeated rows in a 2D array.
