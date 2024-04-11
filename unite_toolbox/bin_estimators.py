@@ -70,9 +70,7 @@ def calc_bin_density(x, data, edges):
     # Loop over dimensions
     for i in range(len(edges)):
         dimbins = np.digitize(x[:, i], edges[i])
-        dimbins = (
-            np.where((dimbins > 0) & (dimbins < len(edges[i])), dimbins, -9998) - 1
-        )
+        dimbins = np.where((dimbins > 0) & (dimbins < len(edges[i])), dimbins, -9998) - 1
         res.append(dimbins)
 
     # Loop over elements
@@ -304,11 +302,7 @@ def calc_bin_mutual_information(x, y, edges):
     mi = 0.0
     for idx in np.ndindex(fxy.shape):
         if fxy[idx] != 0.0:
-            mi += (
-                fxy[idx]
-                * volume[idx]
-                * np.log(fxy[idx] / (fx[idx[:d1]] * fy[idx[-d2:]]))
-            )
+            mi += fxy[idx] * volume[idx] * np.log(fxy[idx] / (fx[idx[:d1]] * fy[idx[-d2:]]))
     return max(0.0, mi)
 
 
@@ -346,9 +340,7 @@ def calc_qs_entropy(sample, alpha=0.25, N_k=500):
     sample.sort()
 
     sample_b = np.random.choice(sample, sample.size, replace=True)
-    X_alpha = [
-        np.random.choice(sample_b[1:-1], n - 1, replace=False) for _ in range(N_k)
-    ]
+    X_alpha = [np.random.choice(sample_b[1:-1], n - 1, replace=False) for _ in range(N_k)]
     X_alpha = np.vstack(X_alpha)
     X_alpha.sort(axis=1)
     Z = np.hstack([x_min, X_alpha.mean(axis=0), x_max])
