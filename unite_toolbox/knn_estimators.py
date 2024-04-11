@@ -127,12 +127,7 @@ def calc_knn_entropy(data, k=1, p_norm=2):
 
     knn_tree = KDTree(data)
     radius = knn_tree.query(data, k + 1, p=p_norm)[0][:, k]
-    h = (
-        digamma(n)
-        - digamma(k)
-        + np.log(vol_lp_ball(1.0, d, p_norm))
-        + d * np.mean(np.log(radius))
-    )
+    h = digamma(n) - digamma(k) + np.log(vol_lp_ball(1.0, d, p_norm)) + d * np.mean(np.log(radius))
     return h
 
 
@@ -148,7 +143,9 @@ def calc_knn_kld(p, q, k=1, p_norm=2):
     samples in p and q is acceptable, 10.1109/TIT.2009.2016060
 
     .. math::
-        \hat{D}_{KL\,n,m}(p||q) = \frac{d}{n} \sum_{i=1}^{n} \log \left ( \frac{\nu_k(i)}{\rho_k(i)} \right ) + \log\left (\frac{m}{n-1}\right )
+        \hat{D}_{KL\,n,m}(p||q)
+        = \frac{d}{n} \sum_{i=1}^{n} \log \left ( \frac{\nu_k(i)}{\rho_k(i)} \right )
+        + \log\left (\frac{m}{n-1}\right )
 
     Where:
         * :math:`d` is the number of dimensions of the data.
@@ -198,13 +195,17 @@ def calc_knn_mutual_information(x, y, k=15):
     10.1103/PhysRevE.69.066138
 
     .. math::
-        \hat{I}(X;Y) = \psi(k) - \frac{1}{N} \sum_{i=1}^{N} \mathbb{E} \left[\psi(n_{i,x} + 1) + \psi(n_{i,y} + 1) \right] + \psi(N)
+        \hat{I}(X;Y)
+        = \psi(k) - \frac{1}{N} \sum_{i=1}^{N} \mathbb{E} \left[\psi(n_{i,x} + 1) + \psi(n_{i,y} + 1) \right]
+        + \psi(N)
 
     Where:
         * :math:`\psi` is the digamma function.
         * :math:`N` is the number of samples.
         * :math:`\mathbb{E}` is the expectation operation.
-        * :math:`n_{i,x}` and :math:`n_{i,y}` are the number of neighbors of every point within a given radius calculated as the distance to the *k*-th nearest neighbor in the joint X-Y space.
+        * :math:`n_{i,x}` and :math:`n_{i,y}` are the number of neighbors
+        of every point within a given radius calculated as the distance to
+        the *k*-th nearest neighbor in the joint X-Y space.
 
     Parameters
     ----------

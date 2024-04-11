@@ -52,9 +52,7 @@ def add_noise_to_data(data: ArrayLike) -> NDArray:
 
     # Generate only the required noise for the data
     mask = find_repeats(data)
-    noise = stats.multivariate_normal.rvs(
-        cov=np.diag(noise_scale.flatten()), size=mask.sum()
-    ).reshape(-1, d)
+    noise = stats.multivariate_normal.rvs(cov=np.diag(noise_scale.flatten()), size=mask.sum()).reshape(-1, d)
 
     # Add noise to specific rows
     noisy_data = data.copy()
@@ -63,9 +61,7 @@ def add_noise_to_data(data: ArrayLike) -> NDArray:
     return noisy_data
 
 
-def density_bootstrap(
-    x, data, estimator, n_bootstraps, significance, add_noise=False, **kwargs
-):
+def density_bootstrap(x, data, estimator, n_bootstraps, significance, add_noise=False, **kwargs):
     n, d = data.shape
     res = np.empty(shape=(x.shape[0], x.shape[1], n_bootstraps))
     for i in trange(int(n_bootstraps), ascii=True, unit="boot"):
@@ -78,9 +74,7 @@ def density_bootstrap(
     return bs_mean, bs_ci
 
 
-def one_sample_bootstrap(
-    data, estimator, n_bootstraps, significance, add_noise=False, **kwargs
-):
+def one_sample_bootstrap(data, estimator, n_bootstraps, significance, add_noise=False, **kwargs):
     n, _ = data.shape
     res = np.empty(n_bootstraps)
     for i in trange(int(n_bootstraps), ascii=True, unit="boot"):

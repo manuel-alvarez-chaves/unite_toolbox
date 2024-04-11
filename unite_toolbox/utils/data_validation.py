@@ -1,6 +1,7 @@
 import numpy as np
 from unite_toolbox.utils.bootstrapping import find_repeats
 
+
 def valida_data_kld(a, b, verbose=False):
     """Validate data for kNN-based KLD
 
