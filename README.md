@@ -12,7 +12,7 @@ using three methods:
 
 - Kernel density-based estimation (KDE)
 - Binning using histograms
-- _k_-nearest neighbor-based estimation (*k*NN)
+- _k_-nearest neighbor-based estimation (_k_-NN)
 
 ## Installation
 
