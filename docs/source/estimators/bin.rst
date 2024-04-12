@@ -1,7 +1,7 @@
 Binning
 -------
 The binning method consists of obtainin an estimate of the PDF using a
-histogram. Frequency at a point :math:`x_i` from histogram can be calculated
+histogram. Frequency at a point :math:`x_i` from a histogram can be calculated
 as:
 
 .. math::
@@ -13,7 +13,7 @@ total number of observations and :math:`\Delta` is the bin width.
 
 To get probability density from this frequency count, the width of the bin
 must be accounted for and, then, the density estimate can be calculated as
-:math:`p(x) = \Delta\,f(x)`.
+:math:`p(x) = \Delta / f(x)`.
 
 The ideal :math:`\Delta` varies depending on the ``data``, but several
 "rules-of-thumb" exist that can be used as guidance. These have been
