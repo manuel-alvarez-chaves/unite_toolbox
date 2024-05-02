@@ -159,10 +159,10 @@ def calc_bin_entropy(data, edges):
     idx = f.nonzero()
     delta = volume[idx]
     f = f[idx]
-    h = -1.0 * np.sum(delta * f * np.log(f * delta))
-    cf = np.sum(f * delta * np.log(delta))
+    h = -1.0 * np.sum(delta * f * np.log(f))
+    corr_fact = -1.0 * np.sum(f * delta * np.log(delta))
 
-    return h, cf
+    return h, corr_fact
 
 
 def calc_uniform_bin_entropy(data, edges):
