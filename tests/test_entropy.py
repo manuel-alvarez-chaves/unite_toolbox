@@ -13,7 +13,7 @@ def test_differential_entropy() -> None:
 
     Test for the implemented methods to estimate differential entropy. Each
     estimate should be close to the expected result give a fixed set of
-    samples from the Gamma-Exponential distribution.
+    samples from the Normal distribution.
     """
     # Estimates
     bins = estimate_ideal_bins(data, counts=False)["scott"]
@@ -23,7 +23,7 @@ def test_differential_entropy() -> None:
     h_ikde = calc_ikde_entropy(data)
 
     # Assertions
-    assert np.isclose(h_bin,  1.42, 0.01)
-    assert np.isclose(h_knn,  1.97, 0.01)
-    assert np.isclose(h_kde,  1.62, 0.01)
-    assert np.isclose(h_ikde, 1.63, 0.01)
+    assert np.isclose(h_bin,  1.42, atol=0.01)
+    assert np.isclose(h_knn,  1.97, atol=0.01)
+    assert np.isclose(h_kde,  1.62, atol=0.01)
+    assert np.isclose(h_ikde, 1.63, atol=0.01)

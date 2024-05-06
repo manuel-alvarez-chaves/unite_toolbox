@@ -45,11 +45,13 @@ Repository = "https://github.com/manuel-alvarez-chaves/unite_toolbox"
 Team = "https://www.simtech.uni-stuttgart.de/exc/research/junior-research-groups/statistical-model-data-integration/"
 
 [tool.ruff]
-# Set the maximum line length to 127 (width of GitHub editor)
-line-length = 127
+line-length = 79
+indent-width = 4
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 72
+skip-magic-trailing-comma = true
 
 [tool.ruff.lint]
-# Add the `line-too-long` rule to the enforced rule set. By default, Ruff omits rules that
-# overlap with the use of a formatter, like Black, but we can override this behavior by
-# explicitly adding the rule.
-extend-select = ["E501"]
+select = ["ALL"]

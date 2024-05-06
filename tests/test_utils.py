@@ -56,7 +56,7 @@ def test_add_noise_to_samples() -> None:
 def test_power_set() -> None:
     """Test for creating a power set.
 
-    Creates for a predefined list of labels.
+    Creates a power set for a predefined list of labels.
     """
     res = [
         (),
@@ -72,9 +72,10 @@ def test_power_set() -> None:
 
 
 def test_marginal_scores() -> None:
-    """Test.
+    """Test for calculating a marginal score.
 
-    (blah)
+    Calculates marginal scores for a predefined list of labels and given scores
+    for combinations of them.
     """
     scores = [0.00, 0.20, 0.25, 0.10, 0.70, 0.50, 0.55, 1.00]
     scores = dict(zip(power_set(labels), scores, strict=True))
