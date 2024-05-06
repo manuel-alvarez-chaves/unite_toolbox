@@ -1,3 +1,6 @@
+from typing import Optional
+from unite_toolbox.utils.data_validation import validate_array
+
 import numpy as np
 from scipy.stats import gaussian_kde
 from scipy.integrate import nquad
@@ -55,7 +58,7 @@ def calc_kde_entropy(data, bandwidth=None):
     return h
 
 
-def calc_ikde_entropy(data, bandwidth=None):
+def calc_ikde_entropy(data: np.ndarray, bandwidth: Optional[float] = None) -> float:
     """Calculates entropy using numerical integration and KDE
 
     Calculates the (joint) entropy of the input data [in nats] by
@@ -67,6 +70,8 @@ def calc_ikde_entropy(data, bandwidth=None):
     respectively.
     This is an integral estimate.
     """
+
+    data = validate_array(data)
 
     lims = np.vstack((data.min(axis=0), data.max(axis=0))).T
     kde = gaussian_kde(data.T, bw_method=bandwidth)
