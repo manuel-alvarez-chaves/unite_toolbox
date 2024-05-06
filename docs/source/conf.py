@@ -15,8 +15,8 @@
 project = "UNITE Toolbox"
 copyright = "2024, Manuel Álvarez Chaves"
 author = "Manuel Álvarez Chaves"
-release = "0.1.5"
-version = "0.1.4"
+release = "0.1.6"
+version = "0.1.6"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -30,7 +30,12 @@ extensions = [
     "nbsphinx",
 ]
 
+# Autodoc
 autodoc_member_order = "bysource"
+autodoc_typehints_format = 'fully-qualified'
+autodoc_type_aliases = {
+    "ArrayLike": "ArrayLike",
+}
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
