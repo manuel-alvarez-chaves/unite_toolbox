@@ -46,12 +46,11 @@ Team = "https://www.simtech.uni-stuttgart.de/exc/research/junior-research-groups
 
 [tool.ruff]
 line-length = 79
-indent-width = 4
 
 [tool.ruff.format]
 docstring-code-format = true
 docstring-code-line-length = 72
-skip-magic-trailing-comma = true
 
 [tool.ruff.lint]
-select = ["ALL"]
+# Default ["E4", "E7", "E9", and "F"] --> Pyflakes ("F") and pycodestyle ("E")
+extend-select = ["B", "Q"]

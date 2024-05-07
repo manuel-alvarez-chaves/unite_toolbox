@@ -52,21 +52,21 @@ def get_samples(
     rng = np.random.default_rng(seed)
 
     ids = []
-    acc_rate = 1.0 # acceptance rate
+    acc_rate = 1.0  # acceptance rate
     while len(ids) < n_samples:
         d = len(limits)
         f = np.array(limits)[:, 0]  # floor
         s = np.array(limits)[:, 1] - f  # scale
-        r = rng.uniform(size=(int(n_samples / acc_rate), d)) # samples from Y
-        r = f + s * r # uniformly distributed samples within `limits`
+        r = rng.uniform(size=(int(n_samples / acc_rate), d))  # samples from Y
+        r = f + s * r  # uniformly distributed samples within `limits`
 
-        F = func(*(np.hsplit(r, d)), **kwargs).flatten() # evaluates `func`
-        G = 1 / np.prod(s) # uniform density -> proposal distribution
-        M = F.max() / G # scaling value (proposal G > F)
+        F = func(*(np.hsplit(r, d)), **kwargs).flatten()  # evaluates `func`
+        G = 1 / np.prod(s)  # uniform density -> proposal distribution
+        M = F.max() / G  # scaling value (proposal G > F)
 
         U = rng.uniform(0.0, 1.0, size=F.shape)
-        ids = np.argwhere(U < F / (M * G)).flatten() # decision rule
-        acc_rate = acc_rate * (len(ids) / n_samples) # update acc. rate
+        ids = np.argwhere(U < F / (M * G)).flatten()  # decision rule
+        acc_rate = acc_rate * (len(ids) / n_samples)  # update acc. rate
 
-    samples = r[ids][:n_samples, :] # return only n_samples
+    samples = r[ids][:n_samples, :]  # return only n_samples
     return samples

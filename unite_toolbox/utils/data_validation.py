@@ -47,7 +47,10 @@ def find_repeats(data: np.ndarray) -> np.ndarray:
 
     """
     _, inv, counts = np.unique(
-        data, return_inverse=True, return_counts=True, axis=0,
+        data,
+        return_inverse=True,
+        return_counts=True,
+        axis=0,
     )
     mask = np.where(counts[inv] > 1, True, False)
     return mask
@@ -82,7 +85,9 @@ def add_noise_to_data(data: np.ndarray) -> np.ndarray:
     # Generate only the required noise for the data
     mask = find_repeats(data)
     noise = stats.multivariate_normal.rvs(
-        cov=np.diag(noise_scale.flatten()), size=mask.sum(), random_state=42,
+        cov=np.diag(noise_scale.flatten()),
+        size=mask.sum(),
+        random_state=42,
     ).reshape(-1, d)
 
     # Add noise to specific rows

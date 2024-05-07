@@ -2,7 +2,9 @@ import numpy as np
 
 
 def estimate_ideal_bins(
-    data: np.ndarray, *, counts: bool | None = True,
+    data: np.ndarray,
+    *,
+    counts: bool | None = True,
 ) -> dict[str, int | list[float]]:
     """Estimate the number of ideal bins.
 
@@ -42,7 +44,9 @@ def estimate_ideal_bins(
 
 
 def calc_bin_density(
-    x: np.ndarray, data: np.ndarray, edges: list[int | list[float]],
+    x: np.ndarray,
+    data: np.ndarray,
+    edges: list[int | list[float]],
 ) -> np.ndarray:
     """Calculate density using binning.
 
@@ -135,7 +139,8 @@ def calc_vol_array(edges: list[np.ndarray]) -> np.ndarray:
 
 
 def calc_bin_entropy(
-    data: np.ndarray, edges: list[int | float] | int,
+    data: np.ndarray,
+    edges: list[int | float] | int,
 ) -> tuple[float]:
     """Calculate entropy using binning.
 
@@ -179,7 +184,8 @@ def calc_bin_entropy(
 
 
 def calc_uniform_bin_entropy(
-    data: np.ndarray, edges: list[list[float]],
+    data: np.ndarray,
+    edges: list[list[float]],
 ) -> tuple[float]:
     """Alternative method to calculate entropy using binning.
 
@@ -231,7 +237,9 @@ def calc_uniform_bin_entropy(
 
 
 def calc_bin_kld(
-    p: np.ndarray, q: np.ndarray, edges: list[list[float]],
+    p: np.ndarray,
+    q: np.ndarray,
+    edges: list[list[float]],
 ) -> float:
     """Calculate Kullback-Leibler divergence (relative entropy) using binning.
 
@@ -286,7 +294,9 @@ def calc_bin_kld(
 
 
 def calc_bin_mutual_information(
-    x: np.ndarray, y: np.ndarray, edges: list[list[float]],
+    x: np.ndarray,
+    y: np.ndarray,
+    edges: list[list[float]],
 ) -> float:
     """Calculate mutual information between `x` and `y` using binning.
 
@@ -318,7 +328,9 @@ def calc_bin_mutual_information(
     _, d2 = y.shape
     data = np.hstack((x, y))
     fxy, joint_edges = np.histogramdd(
-        data, bins=edges[0] + edges[1], density=True,
+        data,
+        bins=edges[0] + edges[1],
+        density=True,
     )
     fx, _ = np.histogramdd(x, bins=edges[0], density=True)
     fy, _ = np.histogramdd(y, bins=edges[1], density=True)

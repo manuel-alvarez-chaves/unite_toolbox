@@ -62,7 +62,9 @@ def density_bootstrap(
         res[:, :, i] = estimator(x, subsample, **kwargs).reshape(-1, d)
     bs_mean = res.mean(axis=2)
     bs_ci = np.quantile(
-        res, [significance / 2, 1 - (significance / 2)], axis=2,
+        res,
+        [significance / 2, 1 - (significance / 2)],
+        axis=2,
     )
     return bs_mean, bs_ci
 

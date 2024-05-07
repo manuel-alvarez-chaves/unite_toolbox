@@ -48,7 +48,10 @@ def vol_lp_ball(r: float, d: int, p_norm: float) -> float:
 
 
 def calc_knn_density(
-    x: np.ndarray, data: np.ndarray, k: int = 5, p_norm: float = 2,
+    x: np.ndarray,
+    data: np.ndarray,
+    k: int = 5,
+    p_norm: float = 2,
 ) -> np.ndarray:
     r"""Calculate the probability density of `x` using *k*-NN.
 
@@ -155,7 +158,10 @@ def calc_knn_entropy(data: np.ndarray, k: int = 1, p_norm: float = 2) -> float:
 
 
 def calc_knn_kld(
-    p: np.ndarray, q: np.ndarray, k: int = 1, p_norm: float = 2,
+    p: np.ndarray,
+    q: np.ndarray,
+    k: int = 1,
+    p_norm: float = 2,
 ) -> float:
     r"""Calculate the Kullback-Leibler divergence between two arrays of data.
 
@@ -215,7 +221,9 @@ def calc_knn_kld(
 
 
 def calc_knn_mutual_information(
-    x: np.ndarray, y: np.ndarray, k: int = 15,
+    x: np.ndarray,
+    y: np.ndarray,
+    k: int = 15,
 ) -> float:
     r"""Calculate mutual information between `x` and `y` using *k*-NN.
 
@@ -256,8 +264,9 @@ def calc_knn_mutual_information(
         Mutual information between `x` and `y` [in nats]
 
     """
-    assert len(x) == len(y), \
-        "`x` and `y` must have the same number of samples."
+    assert len(x) == len(
+        y
+    ), "`x` and `y` must have the same number of samples."
 
     n_samples = len(x)
     xy = np.hstack((x, y))
@@ -268,10 +277,16 @@ def calc_knn_mutual_information(
 
     radius = xy_tree.query(xy, k=[k + 1], p=np.inf)[0].flatten()
     nx = x_tree.query_ball_point(
-        x, radius - 1e-12, p=np.inf, return_length=True,
+        x,
+        radius - 1e-12,
+        p=np.inf,
+        return_length=True,
     )
     ny = y_tree.query_ball_point(
-        y, radius - 1e-12, p=np.inf, return_length=True,
+        y,
+        radius - 1e-12,
+        p=np.inf,
+        return_length=True,
     )
 
     mi = (

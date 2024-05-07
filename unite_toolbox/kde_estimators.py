@@ -6,7 +6,9 @@ from unite_toolbox.utils.data_validation import validate_array
 
 
 def calc_kde_density(
-    x: np.ndarray, data: np.ndarray, bandwidth: float | None = None,
+    x: np.ndarray,
+    data: np.ndarray,
+    bandwidth: float | None = None,
 ) -> np.ndarray:
     """Calculate density using KDE.
 
@@ -35,7 +37,8 @@ def calc_kde_density(
 
 
 def calc_kde_entropy(
-    data: np.ndarray, bandwidth: float | None = None,
+    data: np.ndarray,
+    bandwidth: float | None = None,
 ) -> float:
     """Calculate entropy using KDE.
 
@@ -65,7 +68,8 @@ def calc_kde_entropy(
 
 
 def calc_ikde_entropy(
-    data: np.ndarray, bandwidth: float | None = None,
+    data: np.ndarray,
+    bandwidth: float | None = None,
 ) -> float:
     """Calculate entropy using numerical integration and KDE.
 
@@ -82,7 +86,7 @@ def calc_ikde_entropy(
     lims = np.vstack((data.min(axis=0), data.max(axis=0))).T
     kde = gaussian_kde(data.T, bw_method=bandwidth)
 
-    def eval_entropy(*args: float) -> float: # helper function
+    def eval_entropy(*args: float) -> float:  # helper function
         p = kde.evaluate(np.vstack(args))
         return -1 * p * np.log(p)
 
@@ -91,7 +95,9 @@ def calc_ikde_entropy(
 
 
 def calc_kde_kld(
-    p: np.ndarray, q: np.ndarray, bandwidth: float | None = None,
+    p: np.ndarray,
+    q: np.ndarray,
+    bandwidth: float | None = None,
 ) -> float:
     """Calculate KLD using KDE.
 
@@ -129,7 +135,9 @@ def calc_kde_kld(
 
 
 def calc_ikde_kld(
-    p: np.ndarray, q: np.ndarray, bandwidth: float | None = None,
+    p: np.ndarray,
+    q: np.ndarray,
+    bandwidth: float | None = None,
 ) -> float:
     """Calculate KLD using KDE and numerical integration.
 
@@ -159,7 +167,7 @@ def calc_ikde_kld(
 
     lims = np.vstack((q.min(axis=0) - bw, q.max(axis=0) + bw)).T
 
-    def eval_kld(*args: float) -> float: # helper function
+    def eval_kld(*args: float) -> float:  # helper function
         pi = p_kde.evaluate(np.vstack(args))
         qi = q_kde.evaluate(np.vstack(args))
         res = 0.0
@@ -172,7 +180,9 @@ def calc_ikde_kld(
 
 
 def calc_kde_mutual_information(
-    x: np.ndarray, y: np.ndarray, bandwidth: float | None = None,
+    x: np.ndarray,
+    y: np.ndarray,
+    bandwidth: float | None = None,
 ) -> float:
     """Calculate MI between `x` and `y` using KDE.
 
@@ -212,7 +222,9 @@ def calc_kde_mutual_information(
 
 
 def calc_ikde_mutual_information(
-    x: np.ndarray, y: np.ndarray, bandwidth: float | None = None,
+    x: np.ndarray,
+    y: np.ndarray,
+    bandwidth: float | None = None,
 ) -> float:
     """Calculate MI between `x` and `y` using numerical integration and KDE.
 
