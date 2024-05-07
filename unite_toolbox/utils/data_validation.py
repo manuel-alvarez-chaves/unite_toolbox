@@ -32,7 +32,8 @@ def validate_array(arr: ArrayLike) -> np.ndarray:
 def find_repeats(data: np.ndarray) -> np.ndarray:
     """Find repeats.
 
-    Returns a boolean mask for repeat rows in data where True is a repeated row.
+    Returns a boolean mask for repeat rows in `data` where True is a repeated
+    row.
 
     Parameters
     ----------
@@ -46,14 +47,14 @@ def find_repeats(data: np.ndarray) -> np.ndarray:
 
     """
     _, inv, counts = np.unique(
-        data, return_inverse=True, return_counts=True, axis=0
+        data, return_inverse=True, return_counts=True, axis=0,
     )
     mask = np.where(counts[inv] > 1, True, False)
     return mask
 
 
 def add_noise_to_data(data: np.ndarray) -> np.ndarray:
-    """Add noise to repeated rows in data.
+    """Add noise to repeated rows in `data`.
 
     Adds Gaussian noise to only the repeated rows in a 2D array.
     The noise added is one order of magnitude below the order of magnitude of
@@ -81,7 +82,7 @@ def add_noise_to_data(data: np.ndarray) -> np.ndarray:
     # Generate only the required noise for the data
     mask = find_repeats(data)
     noise = stats.multivariate_normal.rvs(
-        cov=np.diag(noise_scale.flatten()), size=mask.sum(), random_state=42
+        cov=np.diag(noise_scale.flatten()), size=mask.sum(), random_state=42,
     ).reshape(-1, d)
 
     # Add noise to specific rows
@@ -91,7 +92,7 @@ def add_noise_to_data(data: np.ndarray) -> np.ndarray:
     return noisy_data
 
 
-def valida_data_kld(a: np.ndarray, b: np.ndarray):
+def valida_data_kld(a: np.ndarray, b: np.ndarray) -> tuple[np.ndarray]:
     """Validate data for kNN-based KLD.
 
     Eliminates repeated values from a and the joint array a-b to perform a

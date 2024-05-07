@@ -45,13 +45,14 @@ def calc_marginal_scores(scores: dict[tuple, float]) -> dict[Any, float]:
     ----------
     scores : dict
         Dict. of tuples of feature combinations and individual scores
-        i.e. {(): 0.0, ("a"): 0.3, ("b"): 0.5, ("a", "b"): 0.8}
+        i.e. {(): 0.0, ("a",): 0.3, ("b",): 0.5, ("c",): 0.2, ("a", "b"): 0.8,
+              ("a", "c"): 0.5, ("b", "c"): 0.7, ("a", "b", "c"): 1.0}
 
     Returns
     -------
     marginal_scores : dict
         Dict. of individual labels and their marginal scores
-        i.e. {"a": 0.15, "b": 0.25}
+        i.e. {"a": 0.3, "b": 0.5, "c": 0.2}
 
     """
     # Preparation data

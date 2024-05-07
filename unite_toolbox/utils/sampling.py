@@ -40,7 +40,7 @@ def get_samples(
         number of samples to obtain
     seed : int, optional
         seed for random number generator
-    **kwargs
+    **kwargs : dict[str, Any]
         additional arguments for `func`
 
     Returns

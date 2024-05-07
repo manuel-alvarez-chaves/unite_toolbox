@@ -1,8 +1,10 @@
 import numpy as np
 
 
-def estimate_ideal_bins(data, counts=True):
-    """Estimate the number of ideal bins
+def estimate_ideal_bins(
+    data: np.ndarray, *, counts: bool | None = True,
+) -> dict[str, int | list[float]]:
+    """Estimate the number of ideal bins.
 
     Estimates the ideal number of bins for each feature (column) of a 2D data
     array using different methods. See numpy.histogram_bin_edges for a list
@@ -19,9 +21,10 @@ def estimate_ideal_bins(data, counts=True):
     -------
     dict
         A dictionary with a key for each method, and the values are lists of
-        number of bins or bin edges for each feature of the data (if counts=False).
-    """
+        number of bins or bin edges for each feature of the data
+        (if counts=False).
 
+    """
     _, d_features = data.shape
 
     methods = ["fd", "scott", "sturges", "doane"]
@@ -35,19 +38,21 @@ def estimate_ideal_bins(data, counts=True):
             d_bins.append(num_bins)
         ideal_bins.append(d_bins)
 
-    return dict(zip(methods, ideal_bins))
+    return dict(zip(methods, ideal_bins, strict=True))
 
 
-def calc_bin_density(x, data, edges):
-    """Calculates density using binning
+def calc_bin_density(
+    x: np.ndarray, data: np.ndarray, edges: list[int | list[float]],
+) -> np.ndarray:
+    """Calculate density using binning.
 
-    Calculates the density of every point of the 2D array x within the d-dimensional
-    histogram created from data and edges.
+    Calculates the density of every point of the 2D array x within the
+    d-dimensional histogram created from data and edges.
 
-    Similar to a lookup operation where the entries in x are replaced by the bin indices
-    in which they would fall given the binning scheme defined in edges. Then the indices
-    are used to "look up" each value of x in the d-dimensional histogram created from
-    data and edges.
+    Similar to a lookup operation where the entries in x are replaced by the
+    bin indices in which they would fall given the binning scheme defined in
+    edges. Then the indices are used to "look up" each value of x in the
+    d-dimensional histogram created from data and edges.
 
     Parameters
     ----------
@@ -56,21 +61,25 @@ def calc_bin_density(x, data, edges):
     data : numpy.ndarray
         Array of shape (n_samples, d_features)
     edges : list or int
-        A list of length d_features which contains arrays describing the bin edges
-        along each dimension or a list of ints describing the number of bins to use
-        in each dimension.
+        A list of length d_features which contains arrays describing the bin
+        edges along each dimension or a list of ints describing the number of
+        bins to use in each dimension.
 
     Returns
     -------
     fx : numpy.ndarray
         Array of shape (n_samples, 1)
+
     """
     fi, edges = np.histogramdd(data, edges, density=True)
     res = []
     # Loop over dimensions
     for i in range(len(edges)):
         dimbins = np.digitize(x[:, i], edges[i])
-        dimbins = np.where((dimbins > 0) & (dimbins < len(edges[i])), dimbins, -9998) - 1
+        dimbins = (
+            np.where((dimbins > 0) & (dimbins < len(edges[i])), dimbins, -9998)
+            - 1
+        )
         res.append(dimbins)
 
     # Loop over elements
@@ -82,22 +91,24 @@ def calc_bin_density(x, data, edges):
     return fx
 
 
-def calc_vol_array(edges):
-    """Calculates the volume of the multidimensional array
+def calc_vol_array(edges: list[np.ndarray]) -> np.ndarray:
+    """Calculate the volume of a multidimensional array.
 
     Calculates the volume of each cell of the multidimensional array defined
-    by edges where edges is a list of arrays. As an example, if edges contains
-    two arrays, this functions returns a 2D grid where each element in the grid
-    contains the value for the area of that specific cell. If edges contains three
-    arrays, the returned grid is 3D where each element of the grid is the volume of
-    the cell, and so on.
+    by `edges` where `edges` is a list of arrays. As an example, if `edges`
+    contains two arrays, this functions returns a 2D grid where each element
+    in the grid contains the value for the area of that specific cell.
+    If `edges` contains three arrays, the returned grid is 3D where each
+    element of the grid is the volume of the cell, and so on.
 
-    As this is done to calculate the volume of each bin of a multidimensional histogram,
-    the returned grid can be indexed by the same indices as a histogramdd from NumPy.
+    As this is done to calculate the volume of each bin of a multidimensional
+    histogram, the returned grid can be indexed by the same indices as a
+    `histogramdd` from NumPy.
 
     Parameters
     ----------
-    edges : list of 1D numpy.ndarray
+    edges : list[np.ndarray]
+        List of 1D NumPy arrays
 
     Returns
     -------
@@ -106,8 +117,8 @@ def calc_vol_array(edges):
 
     Example
     -------
-        >>> a = np.array([0., 1., 3., 7., 12.])
-        >>> b = np.array([4., 8., 10.])
+        >>> a = np.array([0.0, 1.0, 3.0, 7.0, 12.0])
+        >>> b = np.array([4.0, 8.0, 10.0])
         >>> calc_vol_array([a, b])
         array([[ 4.,  2.],
                [ 8.,  4.],
@@ -115,7 +126,6 @@ def calc_vol_array(edges):
                [20., 10.]])
 
     """
-
     vol = np.diff(edges[0])
     for e in edges[1:]:
         vol = np.stack([vol] * (len(e) - 1), axis=-1)
@@ -124,21 +134,24 @@ def calc_vol_array(edges):
     return vol
 
 
-def calc_bin_entropy(data, edges):
-    """Calculates entropy using binning
+def calc_bin_entropy(
+    data: np.ndarray, edges: list[int | float] | int,
+) -> tuple[float]:
+    """Calculate entropy using binning.
 
-    Calculates the (joint) entropy of the input data after binning it along each
-    dimension using specified bin edges or number of bins.
+    Calculates the (joint) entropy of the input data after binning it along
+    each dimension using specified bin edges or number of bins.
 
     Parameters
     ----------
     data : numpy.ndarray
         Array of shape (n_samples, d_features)
     edges : list or int
-        A list of length d_features which contains arrays describing the bin edges
-        along each dimension or a list of ints describing the number of bins to use
-        in each dimension. Input can also be a single int and the histogram will be
-        created with the same number of bins for each dimension.
+        A list of length d_features which contains arrays describing the bin
+        edges along each dimension or a list of ints describing the number of
+        bins to use in each dimension. Input can also be a single int and the
+        histogram will be created with the same number of bins for each
+        dimension.
 
     Returns
     -------
@@ -147,15 +160,15 @@ def calc_bin_entropy(data, edges):
     cf : float
         The correction factor due to bin spacing. See Cover &
         Thomas (2006) Eq. 8.28 ISBN: 978-0-471-24195-9
-    """
 
-    # binning
+    """
+    # Binning
     f, edges = np.histogramdd(data, bins=edges, density=True)
 
-    # volume
+    # Volume
     volume = calc_vol_array(edges)
 
-    # entropy
+    # Entropy
     idx = f.nonzero()
     delta = volume[idx]
     f = f[idx]
@@ -165,24 +178,27 @@ def calc_bin_entropy(data, edges):
     return h, corr_fact
 
 
-def calc_uniform_bin_entropy(data, edges):
-    """Alternative method to calculate entropy using binning
+def calc_uniform_bin_entropy(
+    data: np.ndarray, edges: list[list[float]],
+) -> tuple[float]:
+    """Alternative method to calculate entropy using binning.
 
-    Calculates the (joint) entropy of the input data. Using this method, every data
-    point is substituted by the specific bin it occupies in `edges`. Therefore limiting
-    the required memory to only store the number of entries in data.
+    Calculates the (joint) entropy of the input data. Using this method, every
+    data point is substituted by the specific bin it occupies in `edges`.
+    Therefore limiting the required memory to only store the number of entries
+    in data.
 
-    NOTE: this only works for uniform binning schemes as the correction factor for
-    differential entropy is calculated as assuming that every bin is of the same size.
+    NOTE: this only works for uniform binning schemes as the correction factor
+    for differential entropy is calculated as assuming that every bin is of the
+    same size.
 
     Parameters
     ----------
     data : numpy.ndarray
         Array of shape (n_samples, d_features)
     edges : list or int
-        A list of length d_features which contains arrays describing the bin edges
-        along each dimension or a list of ints describing the number of bins to use
-        in each dimension.
+        A list of length d_features which contains arrays describing the bin
+        edges along each dimension
 
     Returns
     -------
@@ -191,6 +207,7 @@ def calc_uniform_bin_entropy(data, edges):
     corr_fact : float
         The correction factor due to bin spacing. See Cover &
         Thomas (2006) Eq. 8.28 ISBN: 978-0-471-24195-9
+
     """
     # Digitize data and get count of unique rows
     data_binned = np.empty(shape=data.shape, dtype=np.int64)
@@ -213,12 +230,15 @@ def calc_uniform_bin_entropy(data, edges):
     return h, corr_fact
 
 
-def calc_bin_kld(p, q, edges):
-    """Calculates Kullback-Leibler divergence (relative entropy) using binning
+def calc_bin_kld(
+    p: np.ndarray, q: np.ndarray, edges: list[list[float]],
+) -> float:
+    """Calculate Kullback-Leibler divergence (relative entropy) using binning.
 
-    Calculates the Kullback-Leibler divergence (relative entropy) between p and q
-    [in nats] by approximating both distributions using some binning scheme defined
-    by edges. Edges *must* be able to support the values in q.
+    Calculates the Kullback-Leibler divergence (relative entropy) between `p`
+    and `q` [in nats] by approximating both distributions using some binning
+    scheme defined by `edges`. `edges` *must* be able to support the values in
+    `q`.
 
     Parameters
     ----------
@@ -227,16 +247,16 @@ def calc_bin_kld(p, q, edges):
     q : numpy.ndarray
         Array of shape (m_samples, d_features)
     edges : list or int
-        A list of length d_features which contains arrays describing the bin edges
-        along each dimension or a list of ints describing the number of bins to use
-        in each dimension.
+        A list of length d_features which contains arrays describing the bin
+        edges along each dimension or a list of ints describing the number of
+        bins to use in each dimension.
 
     Returns
     -------
     kld : float
         Kullback-Leibler divergence between p and q [in nats]
-    """
 
+    """
     # Bin according to support of q!
     p_binned = np.empty(shape=p.shape, dtype=np.int64)
     q_binned = np.empty(shape=q.shape, dtype=np.int64)
@@ -265,14 +285,17 @@ def calc_bin_kld(p, q, edges):
     return kld
 
 
-def calc_bin_mutual_information(x, y, edges):
-    """Calculates mutual information between X and Y using binning
+def calc_bin_mutual_information(
+    x: np.ndarray, y: np.ndarray, edges: list[list[float]],
+) -> float:
+    """Calculate mutual information between `x` and `y` using binning.
 
-    Calculates the mutual information between an array X and an array Y. Both X and
-    don't necesarily need the same number of samples as binning is used. This approach
-    builds multivariate histograms for X, Y and X-Y using the specified edges, and
-    evaluates MI in every bin where the density of X-Y is not zero.
-    This is a resubstitution estimate.
+    Calculates the mutual information between an array `x` and an array `y`.
+    Both `x` and `y` don't necesarily need the same number of samples as
+    binning is used. This approach builds multivariate histograms for `x`, `y`
+    and `x`-`y` using the specified edges, and evaluates I(X; Y) in every bin
+    where the density of `x`-`y` is not zero. This is a resubstitution
+    estimate.
 
     Parameters
     ----------
@@ -289,11 +312,14 @@ def calc_bin_mutual_information(x, y, edges):
     -------
     mi : float
         Mutual information between x and y [in nats]
+
     """
     _, d1 = x.shape
     _, d2 = y.shape
     data = np.hstack((x, y))
-    fxy, joint_edges = np.histogramdd(data, bins=edges[0] + edges[1], density=True)
+    fxy, joint_edges = np.histogramdd(
+        data, bins=edges[0] + edges[1], density=True,
+    )
     fx, _ = np.histogramdd(x, bins=edges[0], density=True)
     fy, _ = np.histogramdd(y, bins=edges[1], density=True)
 
@@ -302,12 +328,21 @@ def calc_bin_mutual_information(x, y, edges):
     mi = 0.0
     for idx in np.ndindex(fxy.shape):
         if fxy[idx] != 0.0:
-            mi += fxy[idx] * volume[idx] * np.log(fxy[idx] / (fx[idx[:d1]] * fy[idx[-d2:]]))
+            mi += (
+                fxy[idx]
+                * volume[idx]
+                * np.log(fxy[idx] / (fx[idx[:d1]] * fy[idx[-d2:]]))
+            )
     return max(0.0, mi)
 
 
-def calc_qs_entropy(sample, alpha=0.25, N_k=500):
-    """Calculates the 1-D entropy of the input data.
+def calc_qs_entropy(
+    sample: np.ndarray,
+    alpha: float = 0.25,
+    N_k: int = 500,
+    seed: int | None = None,
+) -> float:
+    """Calculate the 1-D entropy of the input data.
 
     Calculates the 1-D entropy of the input data [in nats] using
     the  quantile spacing (QS) estimator proposed by: Gupta et al.
@@ -318,7 +353,7 @@ def calc_qs_entropy(sample, alpha=0.25, N_k=500):
 
     Parameters
     ----------
-    data : numpy.ndarray
+    sample : numpy.ndarray
         Flat array
     alpha : float, optional
         percent of the instances from the sample used for estimation of
@@ -326,21 +361,26 @@ def calc_qs_entropy(sample, alpha=0.25, N_k=500):
     N_k : int, optional
         number of sample subsets, used to estimate the sample distribution
         for each quantile empirically
+    seed: int, optional
+        random seed, if None: default is used
 
     Returns
     -------
     h : float
         Entropy [in nats] of 'alpha' percent of the instances
-    """
 
+    """
+    rng = np.random.default_rng(seed=seed)
     sample = sample.flatten()
     n = int(np.ceil(alpha * sample.size))
     x_min = sample.min()
     x_max = sample.max()
     sample.sort()
 
-    sample_b = np.random.choice(sample, sample.size, replace=True)
-    X_alpha = [np.random.choice(sample_b[1:-1], n - 1, replace=False) for _ in range(N_k)]
+    sample_b = rng.choice(sample, sample.size, replace=True)
+    X_alpha = [
+        rng.choice(sample_b[1:-1], n - 1, replace=False) for _ in range(N_k)
+    ]
     X_alpha = np.vstack(X_alpha)
     X_alpha.sort(axis=1)
     Z = np.hstack([x_min, X_alpha.mean(axis=0), x_max])

@@ -7,6 +7,6 @@ Utilities
    
    utilities/bootstrapping
    utilities/data_validation
-   utilities/marginal_information
+   utilities/marginal_scores
    utilities/sampling
    
