@@ -1,12 +1,15 @@
 import numpy as np
 
-from tests.aux_functions import generate_samples, rng
+from tests.aux_functions import generate_samples, pdf_mnorm, rng
+from unite_toolbox.bin_estimators import calc_vol_array
+from unite_toolbox.knn_estimators import vol_lp_ball
 from unite_toolbox.utils.data_validation import (
     add_noise_to_data,
     find_repeats,
     validate_array,
 )
 from unite_toolbox.utils.marginal_scores import calc_marginal_scores, power_set
+from unite_toolbox.utils.sampling import get_samples
 
 samples, _ = generate_samples()
 labels = ["a", "b", "c"]
@@ -85,3 +88,65 @@ def test_marginal_scores() -> None:
         assert np.isclose(
             marginal_scores[feature], true_marginal_scores[feature], atol=0.005
         )
+
+
+def test_get_samples() -> None:
+    """Test for rejection sampling.
+
+    Obtains samples from a predefined 2D normal mixture distribution and checks
+    that they are the same as a fixed set of samples.
+    """
+    mnorm1_params = [
+        [[-2, 0], [[1, -0.5], [-0.5, 1]], 0.5],
+        [[2, 0], [[1, 0.5], [0.5, 1]], 0.5],
+    ]
+    mnorm_lims = [[-10, 10], [-10, 10]]
+
+    samples = get_samples(
+        func=pdf_mnorm,
+        limits=mnorm_lims,
+        n_samples=10,
+        seed=42,
+        params=mnorm1_params,
+    )
+    fixed_samples = np.array(
+        [
+            [-1.92, -0.52],
+            [-2.79, 0.25],
+            [1.73, -0.13],
+            [-2.67, 0.79],
+            [1.81, -2.06],
+            [-0.90, 0.32],
+            [-1.61, 0.29],
+            [0.40, -1.84],
+            [-2.42, 0.34],
+            [2.34, 0.85],
+        ]
+    )
+    tol = 0.01
+    assert (np.abs(samples - fixed_samples) < tol).all()
+
+
+def test_vol_ball() -> None:
+    """Test for volume of lp ball.
+
+    Calculates the volume of two lp balls using different norms and compares
+    against the theoretical result.
+    """
+    radius = 2.0
+    assert np.isclose(vol_lp_ball(radius, d=2, p_norm=2), 12.57, atol=0.01)
+    assert np.isclose(vol_lp_ball(radius, d=3, p_norm=np.inf), 64.0, atol=0.01)
+
+
+def test_vol_array() -> None:
+    """Test for area (volume) of non-uniform array.
+
+    Calculates the area of each cell in a 2D array defined by the location of
+    its bin edges. Compares the result against the manually computed bin areas.
+    """
+    edges = [[0.0, 1.0, 3.0, 7.0, 12.0], [4.0, 8.0, 10.0]]
+    area_array = calc_vol_array(edges)
+    true_area_array = np.array(
+        [[4.0, 2.0], [8.0, 4.0], [16.0, 8.0], [20.0, 10.0]]
+    )
+    assert (area_array == true_area_array).all()
