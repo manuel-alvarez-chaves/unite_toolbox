@@ -15,7 +15,7 @@ jobs:
       
       - name: Install package
         run: |
-          pip install .
+          pip install .[dev]
           pip install pytest pytest-cov
 
       - name: Testing with pytest
