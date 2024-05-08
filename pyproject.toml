@@ -7,7 +7,7 @@ packages = ["unite_toolbox", "unite_toolbox.utils"]
 
 [project]
 name = "unite_toolbox"
-version = "0.1.6"
+version = "0.1.7"
 dependencies = [
   "numpy >= 1.25.0",
   "scipy >= 1.12.0",
@@ -31,8 +31,11 @@ license = {text = "MIT License"}
 dev = [
   "jupyterlab >= 4.1.2",
 	"matplotlib >= 3.8.3",
+  "nbsphinx >= 0.9.4",
   "pytest >= 8.2.0",
   "ruff >= 0.4.3",
+  "Sphinx >= 7.3.7",
+  "sphinx_rtd_theme >= 2.0.0",
 ]
 
 [project.urls]
