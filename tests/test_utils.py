@@ -1,7 +1,7 @@
 import numpy as np
 
 from tests.aux_functions import generate_samples, pdf_mnorm, rng
-from unite_toolbox.bin_estimators import calc_vol_array
+from unite_toolbox.bin_estimators import calc_vol_array, estimate_ideal_bins
 from unite_toolbox.knn_estimators import vol_lp_ball
 from unite_toolbox.utils.data_validation import (
     add_noise_to_data,
@@ -13,6 +13,44 @@ from unite_toolbox.utils.sampling import get_samples
 
 samples, _ = generate_samples()
 labels = ["a", "b", "c"]
+
+
+def test_ideal_bins() -> None:
+    """Test for rules-of-thumb.
+
+    Checks the estimated rules-of-thumb against previously calculated number
+    of bins for a fixed data set.
+    """
+    rules = ["fd", "scott", "sturges", "doane"]  # numpy.histogram_bin_edges
+    true_ideal_bins = [[11, 10], [9, 8], [9, 9], [10, 10]]
+    res_dict = {r: b for (r, b) in zip(rules, true_ideal_bins, strict=True)}
+    ideal_bins = estimate_ideal_bins(samples.copy())
+    assert ideal_bins == res_dict
+
+
+def test_vol_array() -> None:
+    """Test for area (volume) of non-uniform array.
+
+    Calculates the area of each cell in a 2D array defined by the location of
+    its bin edges. Compares the result against the manually computed bin areas.
+    """
+    edges = [[0.0, 1.0, 3.0, 7.0, 12.0], [4.0, 8.0, 10.0]]
+    area_array = calc_vol_array(edges)
+    true_area_array = np.array(
+        [[4.0, 2.0], [8.0, 4.0], [16.0, 8.0], [20.0, 10.0]]
+    )
+    assert (area_array == true_area_array).all()
+
+
+def test_vol_ball() -> None:
+    """Test for volume of lp ball.
+
+    Calculates the volume of two lp balls using different norms and compares
+    against the theoretical result.
+    """
+    radius = 2.0
+    assert np.isclose(vol_lp_ball(radius, d=2, p_norm=2), 12.57, atol=0.01)
+    assert np.isclose(vol_lp_ball(radius, d=3, p_norm=np.inf), 64.0, atol=0.01)
 
 
 def test_validate_array() -> None:
@@ -125,28 +163,3 @@ def test_get_samples() -> None:
     )
     tol = 0.01
     assert (np.abs(samples - fixed_samples) < tol).all()
-
-
-def test_vol_ball() -> None:
-    """Test for volume of lp ball.
-
-    Calculates the volume of two lp balls using different norms and compares
-    against the theoretical result.
-    """
-    radius = 2.0
-    assert np.isclose(vol_lp_ball(radius, d=2, p_norm=2), 12.57, atol=0.01)
-    assert np.isclose(vol_lp_ball(radius, d=3, p_norm=np.inf), 64.0, atol=0.01)
-
-
-def test_vol_array() -> None:
-    """Test for area (volume) of non-uniform array.
-
-    Calculates the area of each cell in a 2D array defined by the location of
-    its bin edges. Compares the result against the manually computed bin areas.
-    """
-    edges = [[0.0, 1.0, 3.0, 7.0, 12.0], [4.0, 8.0, 10.0]]
-    area_array = calc_vol_array(edges)
-    true_area_array = np.array(
-        [[4.0, 2.0], [8.0, 4.0], [16.0, 8.0], [20.0, 10.0]]
-    )
-    assert (area_array == true_area_array).all()

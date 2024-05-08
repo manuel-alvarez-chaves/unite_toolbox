@@ -27,7 +27,7 @@ def pdf_mnorm(x: float, y: float, params: list[list[float]]) -> float:
     [[mean1, cov1, weight1], [mean2, cov2, weight2]] for a mixture of two 2D
     normal distributions.
 
-    Parameters:
+    Parameters
     ----------
     x : float
         point to evaluate the PDF in the first axis
@@ -36,6 +36,7 @@ def pdf_mnorm(x: float, y: float, params: list[list[float]]) -> float:
     params : list[lists[float]]
         list of lists containing parameters for mean, cov and weight of the
         distribution
+
     """
     z = 0.0
     for dist in params:
