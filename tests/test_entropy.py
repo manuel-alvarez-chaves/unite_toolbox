@@ -7,7 +7,7 @@ from unite_toolbox.bin_estimators import (
     calc_uniform_bin_entropy,
     estimate_ideal_bins,
 )
-from unite_toolbox.kde_estimators import calc_ikde_entropy, calc_kde_entropy
+from unite_toolbox.kde_estimators import calc_kde_entropy
 from unite_toolbox.knn_estimators import calc_knn_entropy
 from unite_toolbox.utils.bootstrapping import one_sample_bootstrap
 
@@ -28,7 +28,7 @@ def test_differential_entropy() -> None:
     h_qs = calc_qs_entropy(data, seed=42)
     h_knn = calc_knn_entropy(data)
     h_kde = calc_kde_entropy(data)
-    h_ikde = calc_ikde_entropy(data)
+    h_ikde = calc_kde_entropy(data, mode="integral")
 
     # Assertions
     assert np.isclose(h_nonuniform_bin, 1.31, atol=0.01)
