@@ -107,6 +107,7 @@ def calc_kde_kld(
     p: np.ndarray,
     q: np.ndarray,
     bandwidth: float | None = None,
+    mode: str = "resubstitution",
 ) -> float:
     """Calculate KLD using KDE.
 
@@ -115,7 +116,8 @@ def calc_kde_kld(
     a Gaussian kernel density estimate (KDE). The divergence is measured
     between both of the estimated densities. Both density estimates are
     independent, therefore a different number of total samples in `p` and `q`
-    is valid. This is a resubstition estimate.
+    is valid.
+    This function has two modes: `resubstition` and `integral`.
 
     Parameters
     ----------
@@ -125,6 +127,8 @@ def calc_kde_kld(
         Array of shape (m_samples, d_features)
     bandwidth : float, optional
         bandwith of the gaussian kernel
+    mode : str, "resubstitution" or "integral", optional
+        Method for entropy calculation, defaults to 'resubstitution'
 
     Returns
     -------
@@ -132,66 +136,40 @@ def calc_kde_kld(
         Kullback-Leibler divergence between p and q [in nats]
 
     """
+
+    mode = KDEMode(mode)
+    p = validate_array(p)
+    q = validate_array(q)
+
     p_kde = gaussian_kde(p.T, bw_method=bandwidth)
     q_kde = gaussian_kde(q.T, bw_method=bandwidth)
 
-    pi_kde = p_kde.evaluate(p.T)
-    qi_kde = q_kde.evaluate(q.T)
+    if mode == KDEMode.RESUBSTITUTION:
+        pi_kde = p_kde.evaluate(q.T)
+        qi_kde = q_kde.evaluate(q.T)
 
-    kld = np.abs(np.mean(np.log(pi_kde / qi_kde)))
-
-    return kld
-
-
-def calc_ikde_kld(
-    p: np.ndarray,
-    q: np.ndarray,
-    bandwidth: float | None = None,
-) -> float:
-    """Calculate KLD using KDE and numerical integration.
-
-    Calculates the Kullback-Leibler divergence (relative entropy) between two
-    data sets (`p` and `q`) [in nats] by approximating both distributions using
-    a Gaussian kernel density estimate (KDE). The method creates a helper
-    function that as the basis for numerical integration.
-
-    Parameters
-    ----------
-    p : numpy.ndarray
-        Array of shape (n_samples, d_features)
-    q : numpy.ndarray
-        Array of shape (m_samples, d_features)
-    bandwidth : float, optional
-        bandwith of the gaussian kernel
-
-    Returns
-    -------
-    kld : float
-        Kullback-Leibler divergence between p and q [in nats]
-
-    """
-    p_kde = gaussian_kde(p.T, bw_method=bandwidth)
-    q_kde = gaussian_kde(q.T, bw_method=bandwidth)
-    bw = q_kde.factor
-
-    lims = np.vstack((q.min(axis=0) - bw, q.max(axis=0) + bw)).T
-
-    def eval_kld(*args: float) -> float:  # helper function
-        pi = p_kde.evaluate(np.vstack(args))
-        qi = q_kde.evaluate(np.vstack(args))
-        res = 0.0
-        if pi != 0.0 or qi != 0.0:
-            res = pi * np.log(pi / qi)
-        return res
-
-    kld = nquad(eval_kld, ranges=lims)[0]
-    return kld
+        kld = np.abs(np.mean(np.log(pi_kde / qi_kde)))
+        return max(0.0, kld)
+    
+    if mode == KDEMode.INTEGRAL:
+        bw = q_kde.factor
+        lims = np.vstack((q.min(axis=0) - bw, q.max(axis=0) + bw)).T
+        def eval_kld(*args: float) -> float:  # helper function
+            pi = p_kde.evaluate(np.vstack(args))
+            qi = q_kde.evaluate(np.vstack(args))
+            res = 0.0
+            if pi != 0.0 or qi != 0.0:
+                res = pi * np.log(pi / qi)
+            return res
+        kld = nquad(eval_kld, ranges=lims)[0]
+        return max(0.0, kld)
 
 
 def calc_kde_mutual_information(
     x: np.ndarray,
     y: np.ndarray,
     bandwidth: float | None = None,
+    mode: str = "resubstitution",
 ) -> float:
     """Calculate MI between `x` and `y` using KDE.
 
@@ -199,7 +177,8 @@ def calc_kde_mutual_information(
     This method uses a multivariate Gaussian kernel so, both `x` an `y` can
     have multivariate data. The method evaluates density at every point in `x`,
     `y` and `x`-`y`, therefore, `x` and `y` must have the same number of
-    entries. This is a resubstition method.
+    entries.
+    This function has two modes: `resubstition` and `integral`.    
 
     Parameters
     ----------
@@ -209,6 +188,8 @@ def calc_kde_mutual_information(
         Array of shape (n_samples, d2_features)
     bandwidth : float, optional
         bandwith of the gaussian kernel, "scott" by default
+    mode : str, "resubstitution" or "integral", optional
+        Method for entropy calculation, defaults to 'resubstitution'
 
     Returns
     -------
@@ -216,65 +197,34 @@ def calc_kde_mutual_information(
         Mutual information between x and y [in nats]
 
     """
-    xy = np.hstack((x, y))
+    mode = KDEMode(mode)
+    x = validate_array(x)
+    y = validate_array(y)
 
-    kde_x = gaussian_kde(x.T, bw_method=bandwidth)
-    kde_y = gaussian_kde(y.T, bw_method=bandwidth)
-    kde_xy = gaussian_kde(xy.T, bw_method=bandwidth)
-
-    px_kde = kde_x.evaluate(x.T)
-    py_kde = kde_y.evaluate(y.T)
-    pxy_kde = kde_xy.evaluate(xy.T)
-
-    mi = np.mean(np.log(pxy_kde / (px_kde * py_kde)))
-    return max(0.0, mi)
-
-
-def calc_ikde_mutual_information(
-    x: np.ndarray,
-    y: np.ndarray,
-    bandwidth: float | None = None,
-) -> float:
-    """Calculate MI between `x` and `y` using numerical integration and KDE.
-
-    Calculates the mutual information between `x` and `y` [in nats] using
-    numerical integration and KDE.
-    This method uses a multivariate Gaussian kernel so, both `x` an `y` can
-    have multivariate data. The method creates a helper function that as the
-    basis for numerical integration. The integration limits are set as the
-    maximum and minimum values of `x` and `y`, plus and minus one magnitude of
-    the bandwidth respectively. This is an integral estimate.
-
-    Parameters
-    ----------
-    x : numpy.ndarray
-        Array of shape (n_samples, d1_features)
-    y : numpy.ndarray
-        Array of shape (n_samples, d2_features)
-    bandwidth : float, optional
-        bandwith of the gaussian kernel, "scott" by default
-
-    Returns
-    -------
-    mi : float
-        Mutual information between x and y [in nats]
-
-    """
     xy = np.hstack((x, y))
     _, d = xy.shape
 
     kde_x = gaussian_kde(x.T, bw_method=bandwidth)
     kde_y = gaussian_kde(y.T, bw_method=bandwidth)
     kde_xy = gaussian_kde(xy.T, bw_method=bandwidth)
-    bw = kde_xy.factor
 
-    lims = np.vstack((xy.min(axis=0) - bw, xy.max(axis=0) + bw)).T
+    if mode == KDEMode.RESUBSTITUTION:
+        px_kde = kde_x.evaluate(x.T)
+        py_kde = kde_y.evaluate(y.T)
+        pxy_kde = kde_xy.evaluate(xy.T)
 
-    def eval_mi(*args: float) -> float:
-        px = kde_x.evaluate(np.vstack(args[: d - 1]))
-        py = kde_y.evaluate(np.vstack((args[d - 1],)))
-        pxy = kde_xy.evaluate(np.vstack(args))
-        return pxy * np.log(pxy / (px * py))
+        mi = np.mean(np.log(pxy_kde / (px_kde * py_kde)))
+        return max(0.0, mi)
+    
+    if mode == KDEMode.INTEGRAL:
+        bw = kde_xy.factor
+        lims = np.vstack((xy.min(axis=0) - bw, xy.max(axis=0) + bw)).T
 
-    mi = nquad(eval_mi, ranges=lims)[0]
-    return max(0.0, mi)
+        def eval_mi(*args: float) -> float:
+            px = kde_x.evaluate(np.vstack(args[: d - 1]))
+            py = kde_y.evaluate(np.vstack((args[d - 1],)))
+            pxy = kde_xy.evaluate(np.vstack(args))
+            return pxy * np.log(pxy / (px * py))
+
+        mi = nquad(eval_mi, ranges=lims)[0]
+        return max(0.0, mi)
