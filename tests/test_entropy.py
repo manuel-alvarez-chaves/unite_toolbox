@@ -1,6 +1,5 @@
 import numpy as np
 
-from tests.aux_functions import generate_samples
 from unite_toolbox.bin_estimators import (
     calc_bin_entropy,
     calc_qs_entropy,
@@ -11,8 +10,8 @@ from unite_toolbox.kde_estimators import calc_kde_entropy
 from unite_toolbox.knn_estimators import calc_knn_entropy
 from unite_toolbox.utils.bootstrapping import one_sample_bootstrap
 
-data, _ = generate_samples()
-
+data = np.load("tests/data/test_data.npy")
+data = data[:, :, 0]
 
 def test_differential_entropy() -> None:
     """Test differential entropy.

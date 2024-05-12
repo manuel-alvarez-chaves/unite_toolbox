@@ -1,6 +1,6 @@
 import numpy as np
 
-from tests.aux_functions import generate_samples, pdf_mnorm, rng
+from tests.aux_functions import pdf_mnorm, rng
 from unite_toolbox.bin_estimators import calc_vol_array, estimate_ideal_bins
 from unite_toolbox.knn_estimators import vol_lp_ball
 from unite_toolbox.utils.data_validation import (
@@ -11,7 +11,8 @@ from unite_toolbox.utils.data_validation import (
 from unite_toolbox.utils.marginal_scores import calc_marginal_scores, power_set
 from unite_toolbox.utils.sampling import get_samples
 
-samples, _ = generate_samples()
+samples = np.load("tests/data/test_data.npy")
+samples = samples[:, :, 0]
 labels = ["a", "b", "c"]
 
 
@@ -22,7 +23,7 @@ def test_ideal_bins() -> None:
     of bins for a fixed data set.
     """
     rules = ["fd", "scott", "sturges", "doane"]  # numpy.histogram_bin_edges
-    true_ideal_bins = [[11, 10], [9, 8], [9, 9], [10, 10]]
+    true_ideal_bins = [[10, 10], [8, 9], [9, 9], [9, 11]]
     res_dict = {r: b for (r, b) in zip(rules, true_ideal_bins, strict=True)}
     ideal_bins = estimate_ideal_bins(samples.copy())
     assert ideal_bins == res_dict
