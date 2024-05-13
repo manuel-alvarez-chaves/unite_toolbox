@@ -53,13 +53,13 @@ def density_bootstrap(
 
     """
     rng = np.random.default_rng(seed)
-    n, d = data.shape
-    res = np.empty(shape=(x.shape[0], x.shape[1], n_bootstraps))
+    n, _ = data.shape
+    res = np.empty(shape=(x.shape[0], 1, n_bootstraps))
     for i in trange(int(n_bootstraps), ascii=True, unit="boot"):
         sub_idx = rng.choice(n, size=n, replace=True)
         subsample = data[sub_idx, :].copy()
         subsample = add_noise_to_data(subsample) if add_noise else subsample
-        res[:, :, i] = estimator(x, subsample, **kwargs).reshape(-1, d)
+        res[:, :, i] = estimator(x, subsample, **kwargs).reshape(-1, 1)
     bs_mean = res.mean(axis=2)
     bs_ci = np.quantile(
         res,

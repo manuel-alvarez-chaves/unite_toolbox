@@ -97,7 +97,7 @@ def add_noise_to_data(data: np.ndarray) -> np.ndarray:
     return noisy_data
 
 
-def valida_data_kld(a: np.ndarray, b: np.ndarray) -> tuple[np.ndarray]:
+def validate_data_kld(a: np.ndarray, b: np.ndarray) -> tuple[np.ndarray]:
     """Validate data for kNN-based KLD.
 
     Eliminates repeated values from a and the joint array a-b to perform a

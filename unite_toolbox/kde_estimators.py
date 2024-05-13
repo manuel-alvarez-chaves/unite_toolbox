@@ -200,9 +200,9 @@ def calc_kde_mutual_information(
     mode = KDEMode(mode)
     x = validate_array(x)
     y = validate_array(y)
+    _, d = x.shape
 
     xy = np.hstack((x, y))
-    _, d = xy.shape
 
     kde_x = gaussian_kde(x.T, bw_method=bandwidth)
     kde_y = gaussian_kde(y.T, bw_method=bandwidth)
@@ -219,10 +219,9 @@ def calc_kde_mutual_information(
     if mode == KDEMode.INTEGRAL:
         bw = kde_xy.factor
         lims = np.vstack((xy.min(axis=0) - bw, xy.max(axis=0) + bw)).T
-
         def eval_mi(*args: float) -> float:
-            px = kde_x.evaluate(np.vstack(args[: d - 1]))
-            py = kde_y.evaluate(np.vstack((args[d - 1],)))
+            px = kde_x.evaluate(np.vstack(args[:d]))
+            py = kde_y.evaluate(np.vstack((args[d:])))
             pxy = kde_xy.evaluate(np.vstack(args))
             return pxy * np.log(pxy / (px * py))
 
