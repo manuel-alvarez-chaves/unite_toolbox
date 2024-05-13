@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 
 from unite_toolbox.bin_estimators import (
@@ -10,14 +12,15 @@ from unite_toolbox.kde_estimators import calc_kde_entropy
 from unite_toolbox.knn_estimators import calc_knn_entropy
 from unite_toolbox.utils.bootstrapping import one_sample_bootstrap
 
-data = np.load("tests/data/test_data.npy")
+data_path = Path("tests/data/test_data.npy")
+data = np.load(data_path)
 data = data[:, :, 0]
 
 def test_differential_entropy() -> None:
     """Test differential entropy.
 
     Test for the implemented methods to estimate differential entropy. Each
-    estimate should be close to the expected result give a fixed set of
+    estimate should be close to the expected result given a fixed set of
     samples from the Normal distribution.
     """
     # Estimates

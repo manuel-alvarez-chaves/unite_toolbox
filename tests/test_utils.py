@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 
 from tests.aux_functions import pdf_mnorm, rng
@@ -11,8 +13,9 @@ from unite_toolbox.utils.data_validation import (
 from unite_toolbox.utils.marginal_scores import calc_marginal_scores, power_set
 from unite_toolbox.utils.sampling import get_samples
 
-samples = np.load("tests/data/test_data.npy")
-samples = samples[:, :, 0]
+data_path = Path("tests/data/test_data.npy")
+data = np.load(data_path)
+samples = data[:, :, 0]
 labels = ["a", "b", "c"]
 
 
