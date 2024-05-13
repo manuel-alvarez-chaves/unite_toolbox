@@ -10,4 +10,4 @@ jobs:
       - uses: chartboost/ruff-action@v1
         with:
           src: "./unite_toolbox"
-          args: "format --fix"
+          args: "format"

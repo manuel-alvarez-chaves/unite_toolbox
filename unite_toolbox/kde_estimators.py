@@ -150,10 +150,11 @@ def calc_kde_kld(
 
         kld = np.abs(np.mean(np.log(pi_kde / qi_kde)))
         return max(0.0, kld)
-    
+
     if mode == KDEMode.INTEGRAL:
         bw = q_kde.factor
         lims = np.vstack((q.min(axis=0) - bw, q.max(axis=0) + bw)).T
+
         def eval_kld(*args: float) -> float:  # helper function
             pi = p_kde.evaluate(np.vstack(args))
             qi = q_kde.evaluate(np.vstack(args))
@@ -161,6 +162,7 @@ def calc_kde_kld(
             if pi != 0.0 or qi != 0.0:
                 res = pi * np.log(pi / qi)
             return res
+
         kld = nquad(eval_kld, ranges=lims)[0]
         return max(0.0, kld)
 
@@ -178,7 +180,7 @@ def calc_kde_mutual_information(
     have multivariate data. The method evaluates density at every point in `x`,
     `y` and `x`-`y`, therefore, `x` and `y` must have the same number of
     entries.
-    This function has two modes: `resubstition` and `integral`.    
+    This function has two modes: `resubstition` and `integral`.
 
     Parameters
     ----------
@@ -215,10 +217,11 @@ def calc_kde_mutual_information(
 
         mi = np.mean(np.log(pxy_kde / (px_kde * py_kde)))
         return max(0.0, mi)
-    
+
     if mode == KDEMode.INTEGRAL:
         bw = kde_xy.factor
         lims = np.vstack((xy.min(axis=0) - bw, xy.max(axis=0) + bw)).T
+
         def eval_mi(*args: float) -> float:
             px = kde_x.evaluate(np.vstack(args[:d]))
             py = kde_y.evaluate(np.vstack((args[d:])))
