@@ -2,6 +2,8 @@ import numpy as np
 from scipy.spatial import KDTree
 from scipy.special import digamma, gamma
 
+EPS = 1e-12
+
 
 def vol_lp_ball(r: float, d: int, p_norm: float) -> float:
     r"""Calculate volume of :math:`L^p` ball.
@@ -91,6 +93,12 @@ def calc_knn_density(
     p : numpy.ndarray
         Array of shape (n_samples, 1)
 
+    References
+    ----------
+    .. [1] Wang, Q., Kulkarni, S. R., & Verdu, S. (2009). Divergence Estimation
+    for Multidimensional Densities Via k-Nearest-Neighbor Distances.
+    https://doi.org/10.1109/TIT.2009.2016060
+
     """
     n, d = data.shape
     vol = vol_lp_ball(r=1.0, d=d, p_norm=p_norm)
@@ -139,6 +147,11 @@ def calc_knn_entropy(data: np.ndarray, k: int = 1, p_norm: float = 2) -> float:
     -------
     h : float
         Entropy of the data set [in nats]
+
+    References
+    ----------
+    .. [1] Kozachenko, L. F., & Leonenko, N. N. (1987). A statistical estimate
+    for the entropy of a random vector. https://zbmath.org/?q=an:0633.62005
 
     """
     if len(data.shape) == 1:
@@ -206,6 +219,12 @@ def calc_knn_kld(
     kld : float
         Kullback-Leibler divergence between p and q [in nats]
 
+    References
+    ----------
+    .. [1] Wang, Q., Kulkarni, S. R., & Verdu, S. (2009). Divergence Estimation
+    for Multidimensional Densities Via k-Nearest-Neighbor Distances.
+    https://doi.org/10.1109/TIT.2009.2016060
+
     """
     n, m = len(p), len(q)
     d = len(p[0])
@@ -263,6 +282,11 @@ def calc_knn_mutual_information(
     mi : float
         Mutual information between `x` and `y` [in nats]
 
+    References
+    ----------
+    .. [1] Kraskov, A., Stögbauer, H., & Grassberger, P. (2004). Estimating
+    mutual information. https://doi.org/10.1103/PhysRevE.69.066138
+    
     """
     assert len(x) == len(
         y
@@ -278,13 +302,13 @@ def calc_knn_mutual_information(
     radius = xy_tree.query(xy, k=[k + 1], p=np.inf)[0].flatten()
     nx = x_tree.query_ball_point(
         x,
-        radius - 1e-12,
+        radius - EPS,
         p=np.inf,
         return_length=True,
     )
     ny = y_tree.query_ball_point(
         y,
-        radius - 1e-12,
+        radius - EPS,
         p=np.inf,
         return_length=True,
     )

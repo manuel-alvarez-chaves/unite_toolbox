@@ -2,7 +2,7 @@
 
 ### Unified diagnostic evaluation of scientific models based on information theory
 
-![PyPI - Version](https://img.shields.io/pypi/v/unite_toolbox) ![Tests Badge](https://github.com/manuel-alvarez-chaves/unite_toolbox/actions/workflows/run-tests.yml/badge.svg) [![Coverage](https://codecov.io/gh/manuel-alvarez-chaves/unite_toolbox/graph/badge.svg?token=MWNDWXLZ9B)](https://codecov.io/gh/manuel-alvarez-chaves/unite_toolbox) [![](<https://img.shields.io/badge/DOI-10.18419/darus--4188-blue>)](https://doi.org/10.18419/darus-4188)
+![PyPI - Version](https://img.shields.io/pypi/v/unite_toolbox) ![Tests Badge](https://github.com/manuel-alvarez-chaves/unite_toolbox/actions/workflows/run-tests.yml/badge.svg) [![Coverage](https://codecov.io/gh/manuel-alvarez-chaves/unite_toolbox/graph/badge.svg?token=MWNDWXLZ9B)](https://codecov.io/gh/manuel-alvarez-chaves/unite_toolbox) [![Identifier](<https://img.shields.io/badge/DOI-10.18419/darus--4188-blue>)](https://doi.org/10.18419/darus-4188)
 
 The **UNITE Toolbox** is a Python library for incorporating _Information Theory_
 into data analysis and modeling workflows.
