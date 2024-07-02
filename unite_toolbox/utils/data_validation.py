@@ -52,7 +52,7 @@ def find_repeats(data: np.ndarray) -> np.ndarray:
         return_counts=True,
         axis=0,
     )
-    mask = np.where(counts[inv] > 1, True, False)
+    mask = np.where(counts[inv] > 1, True, False).flatten()
     return mask
 
 
