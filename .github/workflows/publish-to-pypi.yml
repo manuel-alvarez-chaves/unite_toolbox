@@ -27,11 +27,11 @@ jobs:
       - name: Build package
         run: uv build
 
-      - name: Publish to PyPI (trusted publishing)
+      - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
       - name: Sign the distributions with Sigstore
-        uses: sigstore/gh-action-sigstore-python@v2.1.1
+        uses: sigstore/gh-action-sigstore-python@v3.0.1
         with:
           inputs: dist/*.tar.gz dist/*.whl
 
