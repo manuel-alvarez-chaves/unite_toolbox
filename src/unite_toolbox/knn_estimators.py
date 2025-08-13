@@ -286,7 +286,7 @@ def calc_knn_mutual_information(
     ----------
     .. [1] Kraskov, A., Stögbauer, H., & Grassberger, P. (2004). Estimating
     mutual information. https://doi.org/10.1103/PhysRevE.69.066138
-    
+
     """
     assert len(x) == len(
         y
@@ -319,4 +319,4 @@ def calc_knn_mutual_information(
         - np.mean(digamma(nx + 1) + digamma(ny + 1))
     )
 
-    return max(0.0, mi)
+    return mi

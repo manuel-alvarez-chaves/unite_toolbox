@@ -55,7 +55,7 @@ def density_bootstrap(
     rng = np.random.default_rng(seed)
     n, _ = data.shape
     res = np.empty(shape=(x.shape[0], 1, n_bootstraps))
-    for i in trange(int(n_bootstraps), ascii=True, unit="boot"):
+    for i in range(int(n_bootstraps)):
         sub_idx = rng.choice(n, size=n, replace=True)
         subsample = data[sub_idx, :].copy()
         subsample = add_noise_to_data(subsample) if add_noise else subsample
@@ -113,7 +113,7 @@ def one_sample_bootstrap(
     rng = np.random.default_rng(seed)
     n, _ = data.shape
     res = np.empty(n_bootstraps)
-    for i in trange(int(n_bootstraps), ascii=True, unit="boot"):
+    for i in range(int(n_bootstraps)):
         sub_idx = rng.choice(n, size=n, replace=True)
         subsample = data[sub_idx, :].copy()
         subsample = add_noise_to_data(subsample) if add_noise else subsample
