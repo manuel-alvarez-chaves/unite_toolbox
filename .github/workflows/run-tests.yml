@@ -1,28 +1,37 @@
-name: Tests
+name: Run Tests
 
-on: [push]
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-      
-      - name: Install package
-        run: |
-          pip install .
-          pip install pytest pytest-cov
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Testing with pytest
-        run: |
-          coverage run -m pytest -v -s
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version-file: "pyproject.toml"
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+
+    - name: Install dependencies
+      run: uv sync --group test
       
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+    - name: Run tests with coverage
+      run: |
+        uv run coverage run -m pytest -v -s
+        uv run coverage xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
