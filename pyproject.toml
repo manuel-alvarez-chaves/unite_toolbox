@@ -1,6 +1,6 @@
 [project]
 name = "unite_toolbox"
-version = "0.2.0"
+version = "0.2.1"
 description = "A toolbox for practical applications of information theory."
 readme = "README.md"
 license = {file = "LICENSE"}

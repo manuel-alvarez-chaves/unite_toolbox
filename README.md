@@ -25,10 +25,10 @@ a release version is available on PyPI and can be installed using `pip`.
 pip install unite_toolbox
 ```
 
-Alternatively, the latest updates can be installed directly from this repository
+Or `uv`.
 
 ```
-pip install git+https://github.com/manuel-alvarez-chaves/unite_toolbox
+uv add unite_toolbox
 ```
 
 Check the `pyproject.toml` for requirements.
