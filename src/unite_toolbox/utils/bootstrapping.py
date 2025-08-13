@@ -2,7 +2,6 @@ from collections.abc import Callable
 from typing import Any
 
 import numpy as np
-from tqdm import trange
 
 from unite_toolbox.utils.data_validation import add_noise_to_data
 
