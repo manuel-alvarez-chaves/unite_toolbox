@@ -15,8 +15,8 @@
 project = "UNITE Toolbox"
 copyright = "2024, Manuel Álvarez Chaves"
 author = "Manuel Álvarez Chaves"
-release = "0.1.6"
-version = "0.1.6"
+release = "0.2.1"
+version = "0.2.1"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
